@@ -73,24 +73,37 @@ export async function signInAccountCreateSession(email: string, password: string
             password
         );
         console.log("Session created: ", session_result);
-        return session_result;
+
+        const userQuery = await databases.listDocuments(
+            DATABASE_ID,
+            USERS_COLLECTION_ID,
+            [Query.equal("userID", [session_result.userId])]
+        )
+        console.log("User Query: ", userQuery);
+
+        // returning array containing session information and user information
+        return [session_result, userQuery.documents[0]]
+
     } catch (error) {
         console.log("service: signInAccountCreateSession(): ", error);
         // Snackbar.show({text: String(error), duration: Snackbar.LENGTH_LONG});
         try {
             // try to retrieve email for a username if the user tried to login with a username
-            const emailQuery = await databases.listDocuments(
+            const userQuery = await databases.listDocuments(
                 DATABASE_ID,
                 USERS_COLLECTION_ID,
                 [Query.equal("username", [email])]
             )
             console.log("service: signInAccountCreateSession(): Attempting username login...");
             const session_result =  await account.createEmailPasswordSession(
-                emailQuery.documents[0]["email"],
+                userQuery.documents[0]["email"],
                 password
             );
             console.log("Session created: ", session_result);
-            return session_result;
+            console.log("User Query: ", userQuery);
+
+            // returning array containing session information and user information
+           return [session_result, userQuery.documents[0]]
         } catch (error)
         {
             console.log("service: signInAccountCreateSession(): ", error);

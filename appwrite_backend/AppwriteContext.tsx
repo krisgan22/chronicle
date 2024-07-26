@@ -14,8 +14,6 @@ type AppContext = {
 
 const AppwriteContext = createContext<AppContext | null>(null);
 
-// export const useAppwriteContext = () => useContext(AppwriteContext);
-
 export const useAppwriteContext = () => {
   const context = useContext(AppwriteContext);
   if (!context) {
@@ -29,27 +27,7 @@ const AppwriteProvider: FC<PropsWithChildren> = ({children}) => {
     const [user, setUser] = useState<any | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    // useEffect(() => {
-    //   getCurrentUser()
-    //   .then((res) => {
-    //     if (res) {
-    //       setIsSignedIn(true);
-    //       setUser(res);
-    //     }
-    //     else
-    //     {
-    //       setIsSignedIn(false);
-    //       setUser(null);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error("AppwriteContext: useEffect: ", error)
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //   })
-    // }, [])
-
+    // User session loading
     useEffect(() => {
       const loadUser = async () => {
         try {
@@ -76,11 +54,13 @@ const AppwriteProvider: FC<PropsWithChildren> = ({children}) => {
         } finally {
           setIsLoading(false);
         }
+        
       };
   
       loadUser();
     }, []);
 
+    // User session saving
     useEffect(() => {
       const saveUser = async () => {
         if (user) {
