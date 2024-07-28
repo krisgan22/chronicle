@@ -18,16 +18,69 @@ const SignUpEmployer = () => {
         ) {
           Alert.alert("Error", "Please fill in all the fields");
         } else {
+            try {
+                // Check for correct format
+                // Employer Name
+                setEmployer(employer.trim());
+                if (employer.length < 1 || employer.length > 50) {
+                    Alert.alert("Error", "Employer name must be between 1 and 50 characters long")
+                    return
+                }
+                const employerRegex = /^[a-zA-Z0-9._-]+$/;
+                if (!employerRegex.test(employer)) {
+                    Alert.alert("Error", "Employer name can only contain letters, numbers, underscores, hyphens, and periods");
+                    return
+                }
+                const consecutiveSpecialCharsRegex = /[_\-.]{2,}/;
+                if (consecutiveSpecialCharsRegex.test(employer)) {
+                    Alert.alert("Error", "Employer name cannot contain consecutive special characters");
+                    return
+                }
 
-            // input validation above, if successful, write below:
-            AsyncStorage.setItem("signup_employer", employer);
-            AsyncStorage.setItem("signup_matchRate", matchRate);
+                // Matching Rate
+                setMatchRate(matchRate.trim());
+                if (isNaN(Number(matchRate))) {
+                    Alert.alert("Error", "Matching rate must be a number");
+                    return
+                }
 
-            router.push("/sign-up-password")
+                const MIN_RATE = 0.01; // Minimum allowable rate
+                const MAX_RATE = 1000; // Maximum allowable rate
+                const rate = Number(matchRate);
+                if (rate < MIN_RATE || rate > MAX_RATE) {
+                    Alert.alert("Error", "Matching rate must be between ${MIN_RATE} and ${MAX_RATE}`");
+                    return
+                }
+
+                if (rate <= 0) {
+                    Alert.alert("Error", "Matching rate must be greater than zero");
+                    return
+                }
+
+                const decimalPlaces = (matchRate.split('.')[1] || '').length;
+                if (decimalPlaces > 2) {
+                    Alert.alert("Error", "Matching rate can have a maximum of two decimal places");
+                    return
+                }
+                
+                // input validation above, if successful, write below:
+                AsyncStorage.setItem("signup_employer", employer);
+                AsyncStorage.setItem("signup_matchRate", matchRate);
+    
+                router.push("/sign-up-password")
+
+            } catch (error) {
+                console.log("sign-up-employer.tsx: submitEmployer(): ", error);
+            }
+
         }
     }
 
     const submitNA = async () => {
+        AsyncStorage.setItem("signup_employer", "");
+        AsyncStorage.setItem("signup_matchRate", "");
+
+        router.push("/sign-up-password")
     }
 
   return (
@@ -46,7 +99,7 @@ const SignUpEmployer = () => {
 
             <View className='mt-5'>
                 <FormField
-                    title='Employer Matching Rate'
+                    title='Employer Matching Rate Per Hour'
                     value={matchRate}
                     handleChangeText={setMatchRate}
                     keyboardType='numeric'
