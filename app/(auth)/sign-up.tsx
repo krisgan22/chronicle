@@ -32,10 +32,10 @@ export default function SignUp() {
 
   const submit = async () => {
     if (!form.username || 
-        !form.first_name || 
-        !form.last_name ||
         !form.email || 
         !form.phone_num ||
+        !form.first_name || 
+        !form.last_name ||
         !form.employer || 
         !form.matching_rate ||
         !form.password

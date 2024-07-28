@@ -80,7 +80,7 @@ export default function SignIn() {
           textStyles='text-base font-medium text-white'
         />
         {isSubmitting == true ? <Loading></Loading> : null}
-        <Link href="/sign-up" className='mt-5'>Click here to Sign-Up</Link>
+        <Link href="/sign-up-id" className='mt-5'>Click here to Sign-Up</Link>
       </ScrollView>
 
       <StatusBar style="dark"></StatusBar>

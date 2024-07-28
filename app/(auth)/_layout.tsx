@@ -14,6 +14,22 @@ export default function AuthLayout() {
             <Stack.Screen
                 name='sign-up' options={{headerShown: false}}
             ></Stack.Screen>
+            
+            <Stack.Screen
+                name='sign-up-names' options={{headerShown: false}}
+            ></Stack.Screen>
+
+            <Stack.Screen
+                name='sign-up-id' options={{headerShown: false}}
+            ></Stack.Screen>
+
+            <Stack.Screen
+                name='sign-up-employer' options={{headerShown: false}}
+            ></Stack.Screen>
+
+            <Stack.Screen
+                name='sign-up-password' options={{headerShown: false}}
+            ></Stack.Screen>
         </Stack>
         
         <StatusBar style='dark'></StatusBar>
