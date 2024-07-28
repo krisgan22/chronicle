@@ -48,7 +48,7 @@ const SignUpEmployer = () => {
                 const MAX_RATE = 1000; // Maximum allowable rate
                 const rate = Number(matchRate);
                 if (rate < MIN_RATE || rate > MAX_RATE) {
-                    Alert.alert("Error", "Matching rate must be between ${MIN_RATE} and ${MAX_RATE}`");
+                    Alert.alert("Error", `Matching rate must be between ${MIN_RATE} and ${MAX_RATE}`);
                     return
                 }
 
@@ -64,8 +64,8 @@ const SignUpEmployer = () => {
                 }
                 
                 // input validation above, if successful, write below:
-                AsyncStorage.setItem("signup_employer", employer);
-                AsyncStorage.setItem("signup_matchRate", matchRate);
+                await AsyncStorage.setItem("signup_employer", employer);
+                await AsyncStorage.setItem("signup_matchRate", matchRate);
     
                 router.push("/sign-up-password")
 
@@ -77,8 +77,8 @@ const SignUpEmployer = () => {
     }
 
     const submitNA = async () => {
-        AsyncStorage.setItem("signup_employer", "");
-        AsyncStorage.setItem("signup_matchRate", "");
+        await AsyncStorage.setItem("signup_employer", "");
+        await AsyncStorage.setItem("signup_matchRate", "");
 
         router.push("/sign-up-password")
     }

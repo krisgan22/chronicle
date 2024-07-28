@@ -119,9 +119,9 @@ const SignUpID = () => {
                 }
 
                 // Inputs passed all checks, save information and proceed
-                AsyncStorage.setItem("signup_username", username);
-                AsyncStorage.setItem("signup_email", email);
-                AsyncStorage.setItem("signup_phone", phone);
+                await AsyncStorage.setItem("signup_username", username);
+                await AsyncStorage.setItem("signup_email", email);
+                await AsyncStorage.setItem("signup_phone", phone);
 
                 router.push("/sign-up-names")
 

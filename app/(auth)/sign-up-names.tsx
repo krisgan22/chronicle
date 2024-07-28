@@ -78,8 +78,8 @@ const SignUpNames = () => {
                 }
 
                 // input validation above, if successful, write below:
-                AsyncStorage.setItem("signup_firstname", firstName);
-                AsyncStorage.setItem("signup_lastname", lastName);
+                await AsyncStorage.setItem("signup_firstname", firstName);
+                await AsyncStorage.setItem("signup_lastname", lastName);
                 
                 router.push("/sign-up-employer")
             
