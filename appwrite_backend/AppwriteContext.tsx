@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React, { FC, PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
-import { getCurrentUser } from './service';
+import { getCurrentSession, getCurrentUser } from './service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AppContext = {
@@ -8,6 +8,8 @@ type AppContext = {
   setIsSignedIn: (isSignedIn: boolean) => void,
   user: any,
   setUser: (user: any) => void,
+  userDetails: any,
+  setUserDetails: (userDetails: any) => void,
   isLoading: boolean,
   setIsLoading: (isLoading: boolean) => void,
 }
@@ -25,6 +27,7 @@ export const useAppwriteContext = () => {
 const AppwriteProvider: FC<PropsWithChildren> = ({children}) => {
     const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
     const [user, setUser] = useState<any | null>(null);
+    const [userDetails, setUserDetails] = useState<any | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     // User session loading
@@ -33,24 +36,24 @@ const AppwriteProvider: FC<PropsWithChildren> = ({children}) => {
         try {
           const savedUser = await AsyncStorage.getItem('user');
           if (savedUser) {
-            console.log("Async Storage retrieval successful: ", savedUser)
+            console.log("Async Storage currentUser retrieval successful: ", savedUser)
             setUser(JSON.parse(savedUser));
             setIsSignedIn(true);
           } else {
             console.log("Initialized welcomeMsg variable");
-            console.log("Async Storage retrieval unsuccessful: ", savedUser);
-            const currentUser = await getCurrentUser();
+            console.log("Async Storage currentUser retrieval unsuccessful: ", savedUser);
+            const currentUser = await getCurrentSession();
             if (currentUser) {
               setUser(currentUser);
               setIsSignedIn(true);
               await AsyncStorage.setItem('user', JSON.stringify(currentUser));
-              console.log("Async Storage write successful: ", currentUser)
+              console.log("Async Storage currentUser write successful: ", currentUser)
             } else {
               setIsSignedIn(false);
             }
           }
         } catch (error) {
-          console.error("AppwriteContext: useEffect: ", error);
+          console.error("AppwriteContext: useEffect(): loadUser():", error);
         } finally {
           setIsLoading(false);
         }
@@ -73,6 +76,54 @@ const AppwriteProvider: FC<PropsWithChildren> = ({children}) => {
   
       saveUser();
     }, [user]);
+
+    // User details loading
+    useEffect(() => {
+      const loadUserDetails = async () => {
+        try {
+          const savedUserDetails = await AsyncStorage.getItem('userDetails');
+          if (savedUserDetails) {
+            console.log("Async Storage currentUserDetails retrieval successful: ", savedUserDetails)
+            setUserDetails(JSON.parse(savedUserDetails));
+            setIsSignedIn(true);
+          } else {
+            console.log("Initialized welcomeMsg variable");
+            console.log("Async Storage currentUserDetails retrieval unsuccessful: ", savedUserDetails);
+            const currentUserDetails = await getCurrentUser();
+            if (currentUserDetails) {
+              setUserDetails(currentUserDetails);
+              setIsSignedIn(true);
+              await AsyncStorage.setItem('userDetails', JSON.stringify(currentUserDetails));
+              console.log("Async Storage currentUserDetails write successful: ", currentUserDetails)
+            } else {
+              setIsSignedIn(false);
+            }
+          }
+        } catch (error) {
+          console.error("AppwriteContext: useEffect(): loadUserDetails():", error);
+        } finally {
+          setIsLoading(false);
+        }
+        
+      };
+  
+      loadUserDetails();
+    }, []);
+
+    
+    // User details saving
+    useEffect(() => {
+      const saveUserDetails = async () => {
+        if (userDetails) {
+          await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+          console.log("Async Storage currentUserDetails write successful: ", userDetails)
+        } else {
+          await AsyncStorage.removeItem('userDetails');
+        }
+      };
+  
+      saveUserDetails();
+    }, [userDetails]);
   
     return (
     <AppwriteContext.Provider 
@@ -81,6 +132,8 @@ const AppwriteProvider: FC<PropsWithChildren> = ({children}) => {
         setIsSignedIn,
         user,
         setUser,
+        userDetails,
+        setUserDetails,
         isLoading,
         setIsLoading
       }}>

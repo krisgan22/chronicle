@@ -14,7 +14,7 @@ import PasswordField from '@/components/PasswordField';
 export default function SignIn() {
 
 
-  const {setUser, setIsSignedIn} = useAppwriteContext();
+  const {setUser, setUserDetails, setIsSignedIn} = useAppwriteContext();
   const [form, setForm] = useState(
     {
       email_or_username: '',
@@ -39,7 +39,9 @@ export default function SignIn() {
         // console.log("sign-in.tsx: signInAccountCreatSession(): ", result);
         if (result) {
           // set to global state
-          setUser(result);
+          
+          setUser(result.session);
+          setUserDetails(result.user);
           setIsSignedIn(true);
           router.replace('/home');
         } else {

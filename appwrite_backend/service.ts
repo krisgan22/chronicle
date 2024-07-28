@@ -35,8 +35,6 @@ export async function signUpAccount(email: string, password: string, username: s
         if (newAccount) {
             // sign in and create email session
             if (newAccount) {
-                await signInAccountCreateSession(email, password);
-                
                 // create instance of user in database with attributes too
                 const newUser = await databases.createDocument(
                     DATABASE_ID, 
@@ -53,11 +51,12 @@ export async function signUpAccount(email: string, password: string, username: s
                         matching_rate: matching_rate
                     });
                 
-                return newUser;
+                const result = await signInAccountCreateSession(email, password);
+                return result;
 
             } else 
             {
-                return newAccount;
+                return null;
             }
         }
     } catch (error) {
@@ -82,7 +81,7 @@ export async function signInAccountCreateSession(email: string, password: string
         console.log("User Query: ", userQuery);
 
         // returning array containing session information and user information
-        return [session_result, userQuery.documents[0]]
+        return {session: session_result, user: userQuery.documents[0]}
 
     } catch (error) {
         console.log("service: signInAccountCreateSession(): ", error);
@@ -103,7 +102,7 @@ export async function signInAccountCreateSession(email: string, password: string
             console.log("User Query: ", userQuery);
 
             // returning array containing session information and user information
-           return [session_result, userQuery.documents[0]]
+           return {session: session_result,  user: userQuery.documents[0]}
         } catch (error)
         {
             console.log("service: signInAccountCreateSession(): ", error);
@@ -127,6 +126,17 @@ export async function getCurrentUser() {
 
     } catch (error) {
         console.log("service.ts: getCurrentUser(): ", error);
+        // Snackbar.show({text: String(error), duration: Snackbar.LENGTH_LONG}); 
+    }        
+}
+
+export async function getCurrentSession() {
+    try {
+        const result = await account.getSession('current');
+        return result
+
+    } catch (error) {
+        console.log("service.ts: getCurrentSession(): ", error);
         // Snackbar.show({text: String(error), duration: Snackbar.LENGTH_LONG}); 
     }        
 }

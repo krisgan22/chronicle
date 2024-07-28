@@ -13,7 +13,7 @@ import Loading from '@/components/Loading'
 import PasswordField from '@/components/PasswordField'
 
 export default function SignUp() {
-  const {setUser, setIsSignedIn} = useAppwriteContext();
+  const {setUser, setUserDetails, setIsSignedIn} = useAppwriteContext();
 
   const [form, setForm] = useState(
     {
@@ -51,7 +51,8 @@ export default function SignUp() {
         if (result)
         {
           // set to global state
-          setUser(result);
+          setUser(result.session);
+          setUserDetails(result.session);
           setIsSignedIn(true);
 
           router.replace('/home');
