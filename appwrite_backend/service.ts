@@ -350,3 +350,16 @@ export async function updateActivity(taskID: any, userID: any, orgID: any, taskN
         console.error("service.ts: submitActivity(): ", error);
     }
 }
+
+export async function checkExistenceInUserTable(attribute: any, attributeValue: any) {
+    try {
+        const checkResult = await databases.listDocuments(
+            DATABASE_ID,
+            USERS_COLLECTION_ID,
+            [Query.equal(attribute, [attributeValue])]
+        )
+        return checkResult;
+    } catch (error) {
+        console.log("service.ts: checkExistenceInUserTable(): ", error)
+    }
+}
