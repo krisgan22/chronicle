@@ -8,9 +8,10 @@ type FormFieldProps = {
     placeholder?: string | undefined,
     styleOptions?: string | undefined,
     keyboardType?: KeyboardTypeOptions | undefined,
+    autoCapitalize?: "none" | "sentences" | "words" | "characters" | undefined,
 }
 
-export default function FormField({title, value, handleChangeText, placeholder, styleOptions, keyboardType}: FormFieldProps) {
+export default function FormField({title, value, handleChangeText, placeholder, styleOptions, keyboardType, autoCapitalize}: FormFieldProps) {
   return (
     <View className={`mb-2 ${styleOptions}`}>
       {title && <Text className='mb-2 font-medium'>{title}</Text>}
@@ -22,7 +23,7 @@ export default function FormField({title, value, handleChangeText, placeholder, 
             placeholderTextColor="#7b7b8b"
             onChangeText={handleChangeText}
             textContentType='oneTimeCode'
-            autoCapitalize='none'
+            autoCapitalize={autoCapitalize ? autoCapitalize : 'none'}
             autoCorrect={false}
             keyboardType={keyboardType ? keyboardType : "default"}>
             </TextInput>

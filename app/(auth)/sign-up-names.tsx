@@ -18,12 +18,78 @@ const SignUpNames = () => {
         ) {
           Alert.alert("Error", "Please fill in all the fields");
         } else {
+            try {
+                setIsSubmitting(true);
+                setFirstName(firstName.trim())
+                setLastName(lastName.trim());
+                // Check for correct format
+                // First name
+                const MIN_LENGTH = 1;
+                const MAX_LENGTH = 50;
+                if (firstName.length < MIN_LENGTH || firstName.length > MAX_LENGTH) {
+                    Alert.alert("Error", "First name must be between 1 and 50 characters long");
+                    return
+                }
+                const nameRegex = /^[A-Za-z'-]+$/;
+                if (!nameRegex.test(firstName)) {
+                    Alert.alert("Error", "First name can only contain letters, hyphens, and apostrophes");
+                    return
+                }
 
-            // input validation above, if successful, write below:
-            AsyncStorage.setItem("signup_firstname", firstName);
-            AsyncStorage.setItem("signup_lastname", lastName);
+                if (/\s/.test(firstName)) {
+                    Alert.alert("Error", "First name cannot contain spaces");
+                    return
+                }
 
-            router.push("/sign-up-employer")
+                const consecutiveSpecialCharsRegex = /[-']{2,}/;
+                if (consecutiveSpecialCharsRegex.test(firstName)) {
+                    Alert.alert("Error", "First name cannot contain consecutive hyphens or apostrophes");
+                    return
+                }
+
+                if (/\d/.test(firstName)) {
+                    Alert.alert("Error", "First name cannot contain numbers");
+                    return
+                }
+
+                // Last Name
+                if (lastName.length < MIN_LENGTH || lastName.length > MAX_LENGTH) {
+                    Alert.alert("Error", "Last name must be between 1 and 50 characters long");
+                    return
+                }
+                if (!nameRegex.test(lastName)) {
+                    Alert.alert("Error", "Last name can only contain letters, hyphens, and apostrophes");
+                    return
+                }
+
+                if (/\s/.test(lastName)) {
+                    Alert.alert("Error", "Last name cannot contain spaces");
+                    return
+                }
+
+                if (consecutiveSpecialCharsRegex.test(lastName)) {
+                    Alert.alert("Error", "Last name cannot contain consecutive hyphens or apostrophes");
+                    return
+                }
+
+                if (/\d/.test(lastName)) {
+                    Alert.alert("Error", "Last name cannot contain numbers");
+                    return
+                }
+
+                // input validation above, if successful, write below:
+                AsyncStorage.setItem("signup_firstname", firstName);
+                AsyncStorage.setItem("signup_lastname", lastName);
+                
+                router.push("/sign-up-employer")
+            
+            } catch (error) {
+                console.log("sign-up-names.tsx: submit(): ", error);    
+            } finally {
+                setIsSubmitting(false);
+            }
+            
+
         }
     }
 
@@ -37,6 +103,7 @@ const SignUpNames = () => {
                     title='First Name'
                     value={firstName}
                     handleChangeText={setFirstName}
+                    autoCapitalize='words'
                 >
                 </FormField>
             </View>
@@ -46,6 +113,7 @@ const SignUpNames = () => {
                     title='Last Name'
                     value={lastName}
                     handleChangeText={setLastName}
+                    autoCapitalize='words'
                 >
                 </FormField>
             </View>
