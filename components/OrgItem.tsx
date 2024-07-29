@@ -28,7 +28,7 @@ const OrgItem = ({orgName, handlePress, desc, moneyContributed, hoursContributed
               { moneyContributed ? (
               <>
                 <Text> • </Text>
-                <Text className='font-light italic'>${parseFloat(moneyContributed.toFixed(2))}</Text>
+                <Text className='font-light italic'>${moneyContributed.toFixed(2)}</Text>
               </>) : <></>}
             </View>
             </>) : <></>

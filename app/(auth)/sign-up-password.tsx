@@ -9,6 +9,7 @@ import PasswordField from '@/components/PasswordField';
 import BackButton from '@/components/BackButton';
 import { useAppwriteContext } from '@/appwrite_backend/AppwriteContext';
 import { signUpAccount } from '@/appwrite_backend/service';
+import Loading from '@/components/Loading';
 
 const SignUpPassword = () => {
     const [password, setPassword] = useState("");
@@ -121,6 +122,7 @@ const SignUpPassword = () => {
                 isLoading={isSubmitting}
                 textStyles='text-base font-medium text-white'
             />
+            {isSubmitting == true ? <Loading></Loading> : null}
 
         </ScrollView>
         <View className='mb-5 mx-10'>

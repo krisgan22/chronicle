@@ -99,7 +99,7 @@ const SignUpEmployer = () => {
 
             <View className='mt-5'>
                 <FormField
-                    title='Employer Matching Rate Per Hour'
+                    title='Employer Matching Rate ($/hr)'
                     value={matchRate}
                     handleChangeText={setMatchRate}
                     keyboardType='numeric'

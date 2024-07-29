@@ -27,7 +27,7 @@ const Orgs = () => {
     useEffect(() => {
         const triedJoining = async () =>
         {
-            const joined = await AsyncStorage.getItem(`join_${orgID}`);
+            const joined = await AsyncStorage.getItem(`join_${user["userId"]}.${orgID}`);
             if (joined) {
                 setIsSubmitting(true);
                 setButtonText("Requested")
@@ -52,7 +52,7 @@ const Orgs = () => {
             } else if (joinRequestResult) {
                 setSnackbarText("Your request was sent!")
                 setSnackbarVisible(true);
-                await AsyncStorage.setItem(`join_${orgID}`, "true");
+                await AsyncStorage.setItem(`join_${user["userId"]}.${orgID}`, "true");
                 setButtonText("Requested")
             }
             // Remove from Async Storage

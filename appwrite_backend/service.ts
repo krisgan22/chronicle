@@ -413,40 +413,42 @@ export async function getContributionsToOrg(userID: any, orgID: any, matching_ra
         )
         console.log("service.ts: getContributionsToOrg")
         if (contributionResult) {
-            let hours: number = 0;
+            // let hours: number = 0;
             let timeString: string = ""
             let money: number = 0;
+            let totalMs: number = 0
             contributionResult.documents.forEach(item => 
                 {
                     const startDate = new Date(item.start_date);
                     const endDate = new Date(item.end_date);
                     const diffInMs = Math.abs(endDate.getTime() - startDate.getTime());
-                    
-                    const diffInHours = diffInMs / (1000 * 60 * 60);
-                    hours += diffInHours;
-
-                    // Convert milliseconds to total minutes
-                    const totalMinutes = Math.floor(diffInMs / (1000 * 60));
-
-                    // Calculate hours and remaining minutes
-                    const calcHours = Math.floor(totalMinutes / 60);
-                    const calcMinutes = totalMinutes % 60;
-
-                      // Construct the output string with correct plurality
-                    const hoursString = calcHours === 1 ? "1hr" : `${calcHours}hrs`;
-                    const minutesString = calcMinutes === 1 ? "1min" : `${calcMinutes}mins`;
-                    
-                    if (calcHours === 0) {
-                        timeString = minutesString;
-                      } else if (calcMinutes === 0) {
-                        timeString = hoursString;
-                      } else {
-                        timeString = `${hoursString} ${minutesString}`;
-                      }
+                    totalMs += diffInMs;
                 }
             )
+            const diffInHours = totalMs / (1000 * 60 * 60);
+            // hours += diffInHours;
+
+            // Convert milliseconds to total minutes
+            const totalMinutes = Math.floor(totalMs / (1000 * 60));
+
+            // Calculate hours and remaining minutes
+            const calcHours = Math.floor(totalMinutes / 60);
+            const calcMinutes = totalMinutes % 60;
+
+              // Construct the output string with correct plurality
+            const hoursString = calcHours === 1 ? "1hr" : `${calcHours}hrs`;
+            const minutesString = calcMinutes === 1 ? "1min" : `${calcMinutes}mins`;
+            
+            if (calcHours === 0) {
+                timeString = minutesString;
+            } else if (calcMinutes === 0) {
+            timeString = hoursString;
+            } else {
+            timeString = `${hoursString} ${minutesString}`;
+            }
+
             if (matching_rate) {
-                money = matching_rate * hours;
+                money = matching_rate * diffInHours;
             }
             return {hours: timeString, money: money};
         }

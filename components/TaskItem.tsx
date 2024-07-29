@@ -13,7 +13,7 @@ type TaskItemProps = {
     subDate: string,
     startDate: string,
     endDate: string,
-    desc: string
+    desc: string,
 }
 
 const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskStatus, subDate, startDate, endDate, desc} : TaskItemProps) => {

@@ -30,10 +30,10 @@ const Profile = () => {
 
             // Update global appwrite context
             setUser(null);
-            setUserDetails(null);
             setIsSignedIn(false);
 
             router.replace('/sign-in');
+            setUserDetails(null);
         } catch (error) {
             console.error(error);
         } finally {
