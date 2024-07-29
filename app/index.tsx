@@ -11,9 +11,9 @@ export default function Index() {
   if (!isLoading && isSignedIn) return <Redirect href={"/home"} />;
 
   return (
-    <SafeAreaView className='flex-1 justify-center items-center' >
-      <Text className="text-2xl font-bold">Welcome to Chronicle</Text>
-      <Link href="/sign-in">Go To Sign-In</Link>
+    <SafeAreaView className='flex-1 justify-center items-center bg-white'>
+      <Text className="text-3xl font-bold">Welcome to Chronicle</Text>
+      <Link className="text-xl" href="/sign-in">Go To Sign-In</Link>
       <StatusBar style='dark'></StatusBar>
     </SafeAreaView>
   );

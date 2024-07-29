@@ -134,7 +134,7 @@ const SignUpID = () => {
     }
 
   return (
-    <SafeAreaView className='h-full mx-5'>
+    <SafeAreaView className='h-full mx-5 mt-10'>
         <BackButton/>
         <Text className="mt-10 font-semibold text-3xl">Let's Get You Signed-Up!</Text>
         <ScrollView className='flex'>
@@ -176,7 +176,7 @@ const SignUpID = () => {
             />
 
         </ScrollView>
-        <View className='mb-5 mx-10'>
+        <View className='mb-20 mx-10'>
             <ProgressBar
                 progress={0.25}
                 color='black'

@@ -94,7 +94,7 @@ const SignUpNames = () => {
     }
 
   return (
-    <SafeAreaView className='h-full mx-5'>
+    <SafeAreaView className='h-full mx-5 mt-10'>
         <BackButton/>
         <Text className="mt-10 font-semibold text-3xl">What's Your Name?</Text>
         <ScrollView className='flex'>
@@ -127,7 +127,7 @@ const SignUpNames = () => {
             />
 
         </ScrollView>
-        <View className='mb-5 mx-10'>
+        <View className='mb-20 mx-10'>
             <ProgressBar
                 progress={0.50}
                 color='black'
