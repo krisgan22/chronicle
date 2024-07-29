@@ -107,6 +107,7 @@ const Orgs = () => {
             console.error(error);
         } finally {
             setIsSubmitting(false);
+            await AsyncStorage.removeItem(`join_${orgID}`);
             await AsyncStorage.setItem("leftOrgMsg", String(orgName));
             router.back();
         }

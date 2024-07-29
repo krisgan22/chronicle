@@ -40,7 +40,7 @@ const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskSt
     }
 
     return (
-    <TouchableOpacity className='bg-white p-5 rounded-md m-4' onPress={handlePress}>
+    <View className='bg-white p-5 rounded-md m-4'>
       <View className='flex flex-row justify-between'>
         <View className='flex-1'>
             <Text className='text-lg font-bold'>{taskName.length > maxTaskLength ? taskName.substring(0, maxTaskLength) + '...' : taskName}</Text>
@@ -69,7 +69,7 @@ const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskSt
         </CustomButton>
         </>)}
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 

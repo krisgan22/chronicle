@@ -248,6 +248,42 @@ export async function joinedOrgs(userID: any) {
     }
 }
 
+export async function joinedOrgsAndContributions(userID: any, matching_rate: any) {
+    try {
+        const joinedOrgsQuery = await databases.listDocuments(
+            DATABASE_ID,
+            JOIN_REQUESTS_COLLECTION_ID,
+            [Query.equal("userID", [userID]),
+            Query.equal("status",["accepted"])]
+        )
+        if (joinedOrgsQuery) {
+            let orgList: any[] = [];
+            let contributionObject: { [key: string]: any } = {}
+            
+            await Promise.all(joinedOrgsQuery.documents.map(async item => {
+                orgList.push(item.orgID)
+                contributionObject[item.orgID] = await getContributionsToOrg(userID, item.orgID, matching_rate);
+            }));
+
+            console.log("service.ts: joinedOrgsAndContributions(): ", contributionObject);
+            console.log("service.ts: joinedOrgsAndContributions(): ", orgList)
+            
+            const getOrgResult = await databases.listDocuments(
+                DATABASE_ID,
+                ORG_COLLECTION_ID,
+                [Query.equal("$id", orgList)]
+            )
+            
+            console.log("service.ts: joinedOrgsAndContributions(): ", getOrgResult)
+            // return getOrgResult.documents
+            return {orgs: getOrgResult.documents, contributions: contributionObject}
+        }
+        return null;
+    } catch (error) {
+        console.log("service.ts: joinedOrgsAndContributions(): ", error);
+    }
+}
+
 export async function submitActivity(userID: any, orgID: any, taskName: any, desc: any, start_date: string, end_date: string)
 {
     try {
@@ -361,5 +397,61 @@ export async function checkExistenceInUserTable(attribute: any, attributeValue: 
         return checkResult;
     } catch (error) {
         console.log("service.ts: checkExistenceInUserTable(): ", error)
+    }
+}
+
+export async function getContributionsToOrg(userID: any, orgID: any, matching_rate: any) {
+    try {
+        const contributionResult = await databases.listDocuments(
+            DATABASE_ID,
+            ACTIVITY_COLLECTION_ID,
+            [
+                Query.equal("userID", [userID]),
+                Query.equal("orgID", [orgID]),
+                Query.equal("taskStatus", ['pending', 'approved'])
+            ]
+        )
+        console.log("service.ts: getContributionsToOrg")
+        if (contributionResult) {
+            let hours: number = 0;
+            let timeString: string = ""
+            let money: number = 0;
+            contributionResult.documents.forEach(item => 
+                {
+                    const startDate = new Date(item.start_date);
+                    const endDate = new Date(item.end_date);
+                    const diffInMs = Math.abs(endDate.getTime() - startDate.getTime());
+                    
+                    const diffInHours = diffInMs / (1000 * 60 * 60);
+                    hours += diffInHours;
+
+                    // Convert milliseconds to total minutes
+                    const totalMinutes = Math.floor(diffInMs / (1000 * 60));
+
+                    // Calculate hours and remaining minutes
+                    const calcHours = Math.floor(totalMinutes / 60);
+                    const calcMinutes = totalMinutes % 60;
+
+                      // Construct the output string with correct plurality
+                    const hoursString = calcHours === 1 ? "1hr" : `${calcHours}hrs`;
+                    const minutesString = calcMinutes === 1 ? "1min" : `${calcMinutes}mins`;
+                    
+                    if (calcHours === 0) {
+                        timeString = minutesString;
+                      } else if (calcMinutes === 0) {
+                        timeString = hoursString;
+                      } else {
+                        timeString = `${hoursString} ${minutesString}`;
+                      }
+                }
+            )
+            if (matching_rate) {
+                money = matching_rate * hours;
+            }
+            return {hours: timeString, money: money};
+        }
+        return {hours: 0, money: 0}
+    } catch (error) {
+        console.log("service.ts: getContributionsToOrg(): ", error);
     }
 }

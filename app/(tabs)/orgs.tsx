@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useAppwriteContext } from '@/appwrite_backend/AppwriteContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useAppwrite from '@/appwrite_backend/useAppwrite';
-import { joinedOrgs } from '@/appwrite_backend/service'
+import { joinedOrgs, joinedOrgsAndContributions } from '@/appwrite_backend/service'
 import { Link, router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -14,11 +14,26 @@ import SearchBar from '@/components/SearchBar';
 
 const Orgs = () => {
   
-  const { user, setUser, setIsSignedIn} = useAppwriteContext();
+  const { user, userDetails, setUser, setIsSignedIn} = useAppwriteContext();
   const [isSubmitting, setIsSubmitting] = useState(false)
   
-  const { data: organizations, refetch } = useAppwrite(() => joinedOrgs(user["userId"]))
+  // const [organizations, setOrganizations] = useState(null)
+  // const [contributions, setContributions] = useState(null);
+
+  // const { data: organizations, refetch } = useAppwrite(() => joinedOrgs(user["userId"]))
+  const { data: result, refetch } = useAppwrite(() => joinedOrgsAndContributions(user["userId"], userDetails.matching_rate))
   const [refreshing, setRefreshing] = useState(false)
+
+  let organizations = {}
+  let contributions = {}
+
+  if (result)
+  {
+    // setOrganizations(result.orgs);
+    organizations = result.orgs;
+    contributions = result.contributions
+  
+  }
 
   const [snackbarVisible, setSnackbarVisible] = useState(false)
   const onDismissSnackBar = () => setSnackbarVisible(false);
@@ -83,7 +98,7 @@ const Orgs = () => {
         </View>
       </View>
       {/* <Text>Create an empty component and put it here if org list is empty.</Text> */}
-      {(organizations === undefined) || (organizations["total"] === 0)
+      {(organizations === undefined) || organizations === null || Object.keys(organizations).length === 0 || (organizations["total"] === 0)
       ?
       <>
         <View className='mx-5 mb-5 flex justify-center items-center'>
@@ -114,6 +129,8 @@ const Orgs = () => {
             router.push(`joinedOrg/${item.name}?orgDesc=${item.description}&orgID=${item.$id}&orgTasks=${item.tasks}`)
           }}
           desc={item.description}
+          hoursContributed={contributions[item.$id].hours}
+          moneyContributed={contributions[item.$id].money}
         >
         </OrgItem>
         )}

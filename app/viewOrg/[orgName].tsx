@@ -9,6 +9,7 @@ import CustomButton from '@/components/CustomButton';
 import { useAppwriteContext } from '@/appwrite_backend/AppwriteContext';
 import { Snackbar } from 'react-native-paper'
 import BackButton from '@/components/BackButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Orgs = () => {
     const { user, setUser, setIsSignedIn} = useAppwriteContext();
@@ -16,12 +17,26 @@ const Orgs = () => {
     const { orgName, orgDesc, orgID } = useLocalSearchParams();
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [snackbarText, setSnackbarText] = useState("")
+    const [buttonText, setButtonText] = useState("Request to Join")
 
     const [isLoading, setIsLoading] = useState(false);
 
     // const { data: result, isLoading } = useAppwrite(
     //     () => getOrgTasks(orgID)
     // );
+    useEffect(() => {
+        const triedJoining = async () =>
+        {
+            const joined = await AsyncStorage.getItem(`join_${orgID}`);
+            if (joined) {
+                setIsSubmitting(true);
+                setButtonText("Requested")
+            }
+        }
+
+        triedJoining();
+    }, [])
+    
 
     const [snackbarVisible, setSnackbarVisible] = useState(false)
     const onDismissSnackBar = () => setSnackbarVisible(false);
@@ -29,23 +44,23 @@ const Orgs = () => {
     const submit = async () => {
         try {
             setIsSubmitting(true);
-           const joinRequestResult = await requestJoinOrg(user["userId"], orgID);
-           if (!joinRequestResult)
-           {
+            const joinRequestResult = await requestJoinOrg(user["userId"], orgID);
+            if (!joinRequestResult)
+            {
                 setSnackbarText("You have already requested to join this organization!")
                 setSnackbarVisible(true);
-           } else if (joinRequestResult) {
+            } else if (joinRequestResult) {
                 setSnackbarText("Your request was sent!")
                 setSnackbarVisible(true);
-           }
+                await AsyncStorage.setItem(`join_${orgID}`, "true");
+                setButtonText("Requested")
+            }
             // Remove from Async Storage
             // console.log("USERID: ", user["userId"]);
             console.log("Request Join Result: ", joinRequestResult)
         } catch (error) {
             console.error(error);
-        } finally {
-            setIsSubmitting(false);
-        }
+        } 
     }
 
     return (
@@ -63,7 +78,7 @@ const Orgs = () => {
                         <Text className='text-lg mt-2'>{orgDesc}</Text>
                         {/* <Text className='text-1xl'>{orgID}</Text> */}
                         <CustomButton
-                            title='Request Join'
+                            title={buttonText}
                             handlePress={submit}
                             containerStyles='mt-20 bg-black'
                             isLoading={isSubmitting}

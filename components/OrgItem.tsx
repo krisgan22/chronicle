@@ -4,11 +4,15 @@ import { View, Text, TouchableOpacity, StyleSheet, Task } from 'react-native';
 type OrgItemProps = {
     orgName: string,
     handlePress: (() => any),
-    desc: string
+    desc: string,
+    moneyContributed?: any,
+    hoursContributed?: any,
 }
 
-const OrgItem = ({orgName, handlePress, desc} : OrgItemProps) => {
+const OrgItem = ({orgName, handlePress, desc, moneyContributed, hoursContributed} : OrgItemProps) => {
     const maxTaskLength = 25;
+    console.log("MONEY: ", moneyContributed);
+    console.log("HOURS: ", hoursContributed);
     return (
     <TouchableOpacity className='bg-white p-5 rounded-md m-4' onPress={handlePress}>
       <View className='flex flex-row justify-between'>
@@ -18,6 +22,17 @@ const OrgItem = ({orgName, handlePress, desc} : OrgItemProps) => {
       </View>
       <View className='h-1 bg-slate-100 my-1 rounded-md'></View>
       <Text className='mt-1' numberOfLines={4}>{desc}</Text>
+      {hoursContributed ? (<>
+              <View className='flex flex-row mt-2'>
+              <Text className='font-light italic'>You Contributed: {hoursContributed}</Text>
+              { moneyContributed ? (
+              <>
+                <Text> • </Text>
+                <Text className='font-light italic'>${parseFloat(moneyContributed.toFixed(2))}</Text>
+              </>) : <></>}
+            </View>
+            </>) : <></>
+      }
     </TouchableOpacity>
   );
 };

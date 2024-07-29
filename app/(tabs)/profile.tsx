@@ -30,6 +30,7 @@ const Profile = () => {
 
             // Update global appwrite context
             setUser(null);
+            setUserDetails(null);
             setIsSignedIn(false);
 
             router.replace('/sign-in');
@@ -67,12 +68,25 @@ const Profile = () => {
                 
                 <Text className='font-semibold text-lg mt-5'>Email</Text>
                 <Text className='font-normal text-lg'>{userDetails.email}</Text>
-                
+
                 <Text className='font-semibold text-lg mt-5'>Employer</Text>
-                <Text className='font-normal text-lg'>{userDetails.employer}</Text>
-                
+                {userDetails.employer ? 
+                <>
+                    <Text className='font-normal text-lg'>{userDetails.employer}</Text>
+                </> : 
+                <>
+                    <Text className='font-normal text-lg'>-</Text>
+                </>}
+
                 <Text className='font-semibold text-lg mt-5'>Matching Rate</Text>
-                <Text className='font-normal text-lg'>${userDetails.matching_rate}/hr</Text>
+                {userDetails.matching_rate ? 
+                <>
+                    <Text className='font-normal text-lg'>${userDetails.matching_rate}/hr</Text>
+                </> : 
+                <>
+                    <Text className='font-normal text-lg'>-</Text>
+                </>}
+
             </View>
 
             {/* <CustomButton
