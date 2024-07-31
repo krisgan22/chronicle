@@ -45,23 +45,19 @@ const Orgs = () => {
   const { user, userDetails, setUser, setIsSignedIn} = useAppwriteContext();
   const [isSubmitting, setIsSubmitting] = useState(false)
   
-  // const [organizations, setOrganizations] = useState(null)
-  // const [contributions, setContributions] = useState(null);
+  const [organizations, setOrganizations] = useState<OrgTypeList>([])
+  const [contributions, setContributions] = useState<ContributionContainer>({});
 
-  // const { data: organizations, refetch } = useAppwrite(() => joinedOrgs(user["userId"]))
   const { data: result, refetch } = useAppwrite(() => joinedOrgsAndContributions(user["userId"], userDetails.matching_rate))
   const [refreshing, setRefreshing] = useState(false)
 
-  let organizations: OrgTypeList = [];
-  let contributions: ContributionContainer = {}
-
-  if (result)
-  {
-    // setOrganizations(result.orgs);
-    organizations = result.orgs;
-    contributions = result.contributions
+  useEffect(() => {
+    if (result) {
+      setOrganizations(result.orgs);
+      setContributions(result.contributions);
+    }
+  }, [result])
   
-  }
 
   const [snackbarVisible, setSnackbarVisible] = useState(false)
   const onDismissSnackBar = () => setSnackbarVisible(false);
@@ -126,7 +122,6 @@ const Orgs = () => {
 
         </View>
       </View>
-      {/* <Text>Create an empty component and put it here if org list is empty.</Text> */}
       {(organizations === undefined) || organizations === null || Object.keys(organizations).length === 0
       ?
       <>
@@ -146,12 +141,9 @@ const Orgs = () => {
           />
         </View>
         <FlatList
-        // data={[{$id: 1}, {$id: 2}, {$id: 3}]}
         data={!searchValue ? organizations : organizations.filter((item: any) => item.name.toLowerCase().includes(searchValue.toLowerCase()))}
         keyExtractor={(item : any) => item.$id}
         renderItem={({item}) => (
-          // <Text className='text-3xl'>{item.$id}</Text>
-          // <Link className='text-3xl' href={`joinedOrg/${item.name}?orgDesc=${item.description}&orgID=${item.$id}&orgTasks=${item.tasks}`}>{item.name}</Link>
           <OrgItem
           orgName={item.name}
           handlePress={() => {
