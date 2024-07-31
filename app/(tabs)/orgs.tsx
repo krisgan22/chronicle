@@ -12,6 +12,34 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import OrgItem from '@/components/OrgItem';
 import SearchBar from '@/components/SearchBar';
 
+type OrgType = {
+  $collectionID: string,
+  $createdAt: string,
+  $databaseId: string,
+  $id: string,
+  $permissions: string,
+  $tenant: string,
+  $updatedAt: string,
+  TIN: string,
+  contact_person_id: string,
+  description: string,
+  members: string[],
+  name: string,
+  phone_num: string,
+  tasks: string[]
+};
+
+type OrgTypeList = OrgType[];
+
+type ContributionType = {
+  hours: string,
+  money: number,
+}
+
+type ContributionContainer = {
+  [key: string]: ContributionType
+}
+
 const Orgs = () => {
   
   const { user, userDetails, setUser, setIsSignedIn} = useAppwriteContext();
@@ -24,8 +52,8 @@ const Orgs = () => {
   const { data: result, refetch } = useAppwrite(() => joinedOrgsAndContributions(user["userId"], userDetails.matching_rate))
   const [refreshing, setRefreshing] = useState(false)
 
-  let organizations = {}
-  let contributions = {}
+  let organizations: OrgTypeList = [];
+  let contributions: ContributionContainer = {}
 
   if (result)
   {
@@ -83,7 +111,8 @@ const Orgs = () => {
     showLeftMsg();
   }, [])
 
-  console.log("orgs.tsx: ", organizations);
+  console.log("orgs.tsx: organizations: ", organizations);
+  console.log("orgs.tsx: contributions: ", contributions);
 
   return (
     <SafeAreaView className='h-full'>
@@ -98,7 +127,7 @@ const Orgs = () => {
         </View>
       </View>
       {/* <Text>Create an empty component and put it here if org list is empty.</Text> */}
-      {(organizations === undefined) || organizations === null || Object.keys(organizations).length === 0 || (organizations["total"] === 0)
+      {(organizations === undefined) || organizations === null || Object.keys(organizations).length === 0
       ?
       <>
         <View className='mx-5 mb-5 flex justify-center items-center'>
