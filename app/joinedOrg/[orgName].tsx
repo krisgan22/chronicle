@@ -113,6 +113,16 @@ const Orgs = () => {
         }
     }
 
+    const viewUsers = async () => {
+        try {
+            setIsSubmitting(true);
+            router.push(`joinedOrg/members/manageMembers?orgID=${orgID}&orgName=${orgName}`)
+
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
     return (
         <SafeAreaView className='h-full mx-5'>
             <BackButton>
@@ -137,6 +147,13 @@ const Orgs = () => {
                         <CustomButton
                             title='View Submitted Timesheets'
                             handlePress={viewTimesheet}
+                            containerStyles='mt-7 bg-black'
+                            isLoading={isSubmitting}
+                            textStyles='text-base font-medium text-white'
+                        />
+                        <CustomButton
+                            title='Manage Members'
+                            handlePress={viewUsers}
                             containerStyles='mt-7 bg-black'
                             isLoading={isSubmitting}
                             textStyles='text-base font-medium text-white'

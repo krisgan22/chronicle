@@ -182,7 +182,7 @@ export async function getOrgTasks(orgID: any)
     }
 }
 
-export async function requestJoinOrg(userID: any, orgID: any)
+export async function requestJoinOrg(username: any, userID: any, orgName : any, orgID: any)
 {
     try {
         console.log("userID: ", userID);
@@ -206,7 +206,9 @@ export async function requestJoinOrg(userID: any, orgID: any)
                     date_created: currentTime.toISOString(),
                     date_updated: currentTime.toISOString(),
                     // Change this to pending after we complete the mentor / board member flow
-                    status: "accepted",
+                    status: "pending",
+                    orgName: orgName,
+                    username: username
                 });
             console.log("service.ts: requestJoinOrg(): ", joinRequestResult);
             return joinRequestResult;
@@ -455,5 +457,101 @@ export async function getContributionsToOrg(userID: any, orgID: any, matching_ra
         return {hours: 0, money: 0}
     } catch (error) {
         console.log("service.ts: getContributionsToOrg(): ", error);
+    }
+}
+
+export async function getOrgMembers(orgID: any) {
+    try {
+        const memberRequest = await databases.listDocuments(
+            DATABASE_ID,
+            JOIN_REQUESTS_COLLECTION_ID,
+            [Query.equal("orgID", [orgID])]
+        )
+
+        let memberIDList : string[] = [];
+        if (memberRequest) {
+            memberRequest.documents.forEach(element => {
+                memberIDList.push(element.userID)
+            });
+        }
+
+        const idMappedMemberRequest = memberRequest.documents.reduce((acc : any, obj: any) => {
+            acc[obj.userID] = obj;
+            return acc;
+          }, {});
+
+        const memberDetailsRequest = await databases.listDocuments(
+            DATABASE_ID,
+            USERS_COLLECTION_ID,
+            [Query.equal("userID", memberIDList)]
+        )
+        return [memberDetailsRequest, idMappedMemberRequest];
+
+    } catch (error) {
+        console.log("service.ts: getOrgMembers(): ", error);
+    }
+}
+
+export async function acceptUserOrgJoinRequest(userID: any, orgID: any, privilege: string = "volunteer")
+{
+    try {
+        const findRequest = await databases.listDocuments(
+            DATABASE_ID,
+            JOIN_REQUESTS_COLLECTION_ID,
+            [Query.equal("userID", [userID]),
+             Query.equal("orgID", [orgID])]
+        )
+
+        const updateRequest = await databases.updateDocument(
+            DATABASE_ID,
+            JOIN_REQUESTS_COLLECTION_ID,
+            findRequest.documents[0].$id,
+            {
+                status: "accepted",
+                privilege: privilege
+            }
+        )
+
+        return updateRequest;
+        
+    } catch (error) {
+        console.log("service.ts: acceptUserOrgJoinRequest(): ", error);
+    }
+}
+
+export async function acceptUserOrgJoinRequestWithID(requestID: string, privilege: string = "volunteer")
+{
+    try {
+        const updateRequest = await databases.updateDocument(
+            DATABASE_ID,
+            JOIN_REQUESTS_COLLECTION_ID,
+            requestID,
+            {
+                status: "accepted",
+                privilege: privilege
+            }
+        )
+
+        return updateRequest;
+        
+    } catch (error) {
+        console.log("service.ts: acceptUserOrgJoinRequest(): ", error);
+    }
+}
+
+export async function getCurrentUserOrgPrivilege(userID: any, orgID: any)
+{
+    try {
+        const privilegeRequest = await databases.listDocuments(
+            DATABASE_ID,
+            JOIN_REQUESTS_COLLECTION_ID,
+            [
+                Query.equal("userID", userID),
+                Query.equal("orgID", orgID)
+            ]
+        )
+        return privilegeRequest.documents[0].privilege
+    } catch (error) {
+        console.log("service.ts: getCurrentUserOrgPrivilege(): ", error);
     }
 }

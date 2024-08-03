@@ -12,7 +12,7 @@ import BackButton from '@/components/BackButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Orgs = () => {
-    const { user, setUser, setIsSignedIn} = useAppwriteContext();
+    const { user, userDetails, setUser, setIsSignedIn} = useAppwriteContext();
     // const [loading, setLoading] = useState(true);
     const { orgName, orgDesc, orgID } = useLocalSearchParams();
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -44,7 +44,7 @@ const Orgs = () => {
     const submit = async () => {
         try {
             setIsSubmitting(true);
-            const joinRequestResult = await requestJoinOrg(user["userId"], orgID);
+            const joinRequestResult = await requestJoinOrg(userDetails.username, user["userId"], orgName, orgID);
             if (!joinRequestResult)
             {
                 setSnackbarText("You have already requested to join this organization!")
@@ -102,38 +102,5 @@ const Orgs = () => {
         </SafeAreaView>
     )
 }
-
-const styles = {
-    app: {
-      flex: 4, // the number of columns you want to divide the screen into
-      marginHorizontal: "auto",
-      width: 400,
-      backgroundColor: "red"
-    },
-    row: {
-      flexDirection: "row"
-    },
-    "1col":  {
-      backgroundColor:  "lightblue",
-      borderColor:  "#fff",
-      borderWidth:  1,
-      flex:  1
-    },
-    "2col":  {
-      backgroundColor:  "green",
-      borderColor:  "#fff",
-      borderWidth:  1,
-      flex:  2
-    },
-    "3col":  {
-      backgroundColor:  "orange",
-      borderColor:  "#fff",
-      borderWidth:  1,
-      flex:  3
-    },
-    "4col":  {
-      flex:  4
-    }
-  };
 
 export default Orgs
