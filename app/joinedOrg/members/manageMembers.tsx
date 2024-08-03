@@ -42,6 +42,13 @@ const manageMembers = () => {
     setSnackbarVisible(true);
   }
 
+  const declineUser = async (userID: any, orgID: any, username: any) => {
+    await leaveOrg(userID, orgID)
+    await refetch();
+    setSnackbarText(`Successfully declined ${username}`);
+    setSnackbarVisible(true);
+  }
+
   const onRefresh = async () => {
     // refresh
     await refetch();
@@ -74,7 +81,7 @@ const manageMembers = () => {
         keyExtractor={(item : any) => item.$id}
         renderItem={({item}) => (
             <PersonItem
-              username={item.username}
+              username={item.username === userDetails.username ? item.username + " (You)" : item.username}
               privilege={members[1][item.userID]["privilege"]}
               first_name={item.first_name}
               last_name={item.last_name}
@@ -88,7 +95,10 @@ const manageMembers = () => {
               acceptPress={() => {
                 acceptUser(item.userID, orgID, item.username, "volunteer")
               }}
-              hideButtons={user.userId === item.userID}
+              declinePress={() => {
+                declineUser(item.userID, orgID, item.username);
+              }}
+              hideButtons={user.userId === item.userID || privilege === "volunteer"}
             >
             </PersonItem>
         )}

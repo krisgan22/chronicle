@@ -258,7 +258,12 @@ export async function joinedOrgsAndContributions(userID: any, matching_rate: any
             [Query.equal("userID", [userID]),
             Query.equal("status",["accepted"])]
         )
+        console.log("service.ts: joinedOrgsAndContributions(): joinedOrgsQuery: ", joinedOrgsQuery);
         if (joinedOrgsQuery) {
+            if (joinedOrgsQuery.total === 0) {
+                console.log("service.ts: NO ORGS");
+                return {};
+            }
             let orgList: any[] = [];
             let contributionObject: { [key: string]: any } = {}
             
@@ -349,6 +354,21 @@ export async function getSubmittedActivities(userID: any, orgID: any)
         return activityQuery.documents
     } catch (error) {
         console.log("service.ts: getSubmittedActivities(): ", error)
+    }
+}
+
+export async function getAllSubmittedActivities(orgID: any)
+{
+    try {
+        const activityQuery = await databases.listDocuments(
+            DATABASE_ID,
+            ACTIVITY_COLLECTION_ID,
+            [Query.equal("orgID", [orgID])]
+        )
+        console.log("service.ts: getAllSubmittedActivities(): ", activityQuery);
+        return activityQuery.documents
+    } catch (error) {
+        console.log("service.ts: getAllSubmittedActivities(): ", error)
     }
 }
 
@@ -553,5 +573,22 @@ export async function getCurrentUserOrgPrivilege(userID: any, orgID: any)
         return privilegeRequest.documents[0].privilege
     } catch (error) {
         console.log("service.ts: getCurrentUserOrgPrivilege(): ", error);
+    }
+}
+
+export async function decideTimesheet(timesheetID: any, decision: string)
+{
+    try {
+        const updateTimesheetRequest = await databases.updateDocument(
+            DATABASE_ID,
+            ACTIVITY_COLLECTION_ID,
+            timesheetID,
+            {
+                "taskStatus": decision
+            }
+        )
+    } catch (error) {
+        console.log("service.ts: decideTimesheet(): ", error)
+        
     }
 }

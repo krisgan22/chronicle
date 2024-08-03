@@ -17,10 +17,11 @@ type PersonItemProps = {
     orgID?: any,
     kickPress: (() => any),
     acceptPress: (() => any),
+    declinePress: (() => any),
     hideButtons: boolean,
 }
 
-const PersonItem = ({username, handlePress, privilege, first_name, last_name, employer, matching_rate, moneyContributed, hoursContributed, userID, orgID, kickPress, acceptPress, hideButtons} : PersonItemProps ) => {
+const PersonItem = ({username, handlePress, privilege, first_name, last_name, employer, matching_rate, moneyContributed, hoursContributed, userID, orgID, kickPress, acceptPress, declinePress, hideButtons=true} : PersonItemProps ) => {
   return (
     <TouchableOpacity className='bg-white p-5 rounded-md m-4'>
       <View className='flex flex-row justify-between'>
@@ -63,6 +64,13 @@ const PersonItem = ({username, handlePress, privilege, first_name, last_name, em
                 title='accept'
                 textStyles='text-cyan-700'
                 handlePress={acceptPress}
+                containerStyles='h-5 mx-5'
+            >  
+            </CustomButton>
+            <CustomButton
+                title='decline'
+                textStyles='text-rose-700'
+                handlePress={declinePress}
                 containerStyles='h-5'
             >  
             </CustomButton>

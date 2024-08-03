@@ -7,16 +7,19 @@ type TaskItemProps = {
     taskID: string,
     taskName: string,
     handlePress: (() => any),
-    deletePress: (() => any),
-    editPress: (() => any),
+    deletePress?: (() => any),
+    editPress?: (() => any),
     taskStatus: string,
     subDate: string,
     startDate: string,
     endDate: string,
     desc: string,
+    username?: string,
+    approvePress?: (() => any),
+    rejectPress?: (() => any),
 }
 
-const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskStatus, subDate, startDate, endDate, desc} : TaskItemProps) => {
+const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskStatus, subDate, startDate, endDate, desc, username, approvePress, rejectPress} : TaskItemProps) => {
   
     const maxTaskLength = 25;
     const startDateObject: Date = new Date(startDate);
@@ -44,6 +47,10 @@ const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskSt
       <View className='flex flex-row justify-between'>
         <View className='flex-1'>
             <Text className='text-lg font-bold'>{taskName.length > maxTaskLength ? taskName.substring(0, maxTaskLength) + '...' : taskName}</Text>
+            {username ? 
+            <>
+              <Text className='leading-8'>{username}</Text>
+            </> : <></>}
             <Text className='text-slate-400 leading-8 italic'>submitted {subDate}</Text>
         </View>
         <Text className={`leading-7 ${taskStatus == "pending" ? 'text-amber-500' : taskStatus == "approved" ? 'text-green-500' : 'text-rose-700'}`}>{taskStatus}</Text>
@@ -51,62 +58,50 @@ const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskSt
       <View className='h-1 bg-slate-100 my-1 rounded-md'></View>
       <Text className='mt-1' numberOfLines={4}>{desc}</Text>
       <Text className='mt-2 text-slate-500'>{durationString}</Text>
-      <View className='flex-row justify-end'>
-        {taskStatus !== "approved" && (<>
-        <CustomButton
-          title='edit'
-          textStyles='px-5 text-slate-600'
-          handlePress={editPress}
-          containerStyles='h-5'
-        >
-        </CustomButton>
-        <CustomButton
-          title='delete'
-          textStyles='text-rose-700'
-          handlePress={deletePress}
-          containerStyles='h-5'
-        >
-        </CustomButton>
-        </>)}
-      </View>
+      {username ? 
+      <>
+        <View className='flex-row justify-end'>
+          {taskStatus !== "approved" && (<>
+          <CustomButton
+            title='approve'
+            textStyles='px-5 text-green-600'
+            handlePress={approvePress}
+            containerStyles='h-5'
+          >
+          </CustomButton>
+          <CustomButton
+            title='reject'
+            textStyles='text-rose-700'
+            handlePress={rejectPress}
+            containerStyles='h-5'
+          >
+          </CustomButton>
+          </>)}
+        </View>
+      </>
+      :
+      <>
+        <View className='flex-row justify-end'>
+          {taskStatus !== "approved" && (<>
+          <CustomButton
+            title='edit'
+            textStyles='px-5 text-slate-600'
+            handlePress={approvePress}
+            containerStyles='h-5'
+          >
+          </CustomButton>
+          <CustomButton
+            title='delete'
+            textStyles='text-rose-700'
+            handlePress={rejectPress}
+            containerStyles='h-5'
+          >
+          </CustomButton>
+          </>)}
+        </View>
+      </>}
     </View>
   );
 };
-
-// const styles = StyleSheet.create({
-//   card: {
-//     backgroundColor: '#fff',
-//     padding: 10,
-//     borderRadius: 8,
-//     marginVertical: 5,
-//     shadowColor: '#000',
-//     shadowOpacity: 0.1,
-//     shadowRadius: 10,
-//     elevation: 5,
-//   },
-//   header: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//   },
-//   taskName: {
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//   },
-//   status: {
-//     color: 'orange', // Change color based on status
-//   },
-//   submittedDate: {
-//     fontStyle: 'italic',
-//     color: '#666',
-//   },
-//   dateRange: {
-//     marginTop: 5,
-//     color: '#333',
-//   },
-//   description: {
-//     marginTop: 5,
-//     color: '#666',
-//   },
-// });
 
 export default TaskItem;

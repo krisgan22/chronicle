@@ -11,6 +11,7 @@ import { Snackbar } from 'react-native-paper'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import OrgItem from '@/components/OrgItem';
 import SearchBar from '@/components/SearchBar';
+import CustomButton from '@/components/CustomButton';
 
 type OrgType = {
   $collectionID: string,
@@ -53,6 +54,7 @@ const Orgs = () => {
 
   useEffect(() => {
     if (result) {
+      console.log("orgs.tsx: useEffect(): result: ", result)
       setOrganizations(result.orgs);
       setContributions(result.contributions);
     }
@@ -127,7 +129,22 @@ const Orgs = () => {
       <>
         <View className='mx-5 mb-5 flex justify-center items-center'>
           <Text className='font-bold text-lg'>No joined organizations.</Text>
-          <Link href='/home' className='pt-2 font-medium text-lg'>Click here to find organizations!</Link>
+          <CustomButton
+              title='Find Organizations'
+              handlePress={() => {
+                router.replace("/home")
+              }}
+              containerStyles='px-5 mt-7 bg-black'
+              isLoading={isSubmitting}
+              textStyles='text-base font-medium text-white'
+            />
+          <CustomButton
+              title='Refresh'
+              handlePress={onRefresh}
+              containerStyles='px-5 mt-7 bg-black'
+              isLoading={isSubmitting}
+              textStyles='text-base font-medium text-white'
+          />
         </View>  
       </>
       :

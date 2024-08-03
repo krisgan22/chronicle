@@ -128,7 +128,7 @@ const Orgs = () => {
     const viewMemberTimesheets = async () => {
         try {
             setIsSubmitting(true);
-            router.push(`joinedOrg/submitted/${orgName}?orgID=${orgID}&privilege=${privilege}`)
+            router.push(`joinedOrg/manageSubmitted/${orgName}?orgID=${orgID}`)
 
         } finally {
             setIsSubmitting(false);
@@ -157,25 +157,25 @@ const Orgs = () => {
                             textStyles='text-base font-medium text-white'
                         />
                         <CustomButton
-                            title='View My Submitted Timesheets'
+                            title='View My Timesheets'
                             handlePress={viewTimesheet}
-                            containerStyles='mt-7 bg-black'
+                            containerStyles='mt-7 bg-indigo-700'
                             isLoading={isSubmitting}
                             textStyles='text-base font-medium text-white'
                         />
                         <CustomButton
-                            title='Manage Members'
+                            title='View Members'
                             handlePress={viewUsers}
-                            containerStyles='mt-7 bg-black'
+                            containerStyles='mt-7 bg-green-700'
                             isLoading={isSubmitting}
                             textStyles='text-base font-medium text-white'
                         />
                         {privilege !== null && privilege !== undefined && (privilege === "board_member" || privilege === "mentor") ?
                         <>
                             <CustomButton
-                                title='Manage Members'
+                                title='View Member Timesheets'
                                 handlePress={viewMemberTimesheets}
-                                containerStyles='mt-7 bg-black'
+                                containerStyles='mt-7 bg-cyan-700'
                                 isLoading={isSubmitting}
                                 textStyles='text-base font-medium text-white'
                             />
@@ -184,7 +184,7 @@ const Orgs = () => {
                         <CustomButton
                             title='Leave Organization'
                             handlePress={leave}
-                            containerStyles='mt-40 bg-rose-700'
+                            containerStyles='mt-20 bg-rose-700'
                             isLoading={isSubmitting}
                             textStyles='text-base font-medium text-white'
                         />
