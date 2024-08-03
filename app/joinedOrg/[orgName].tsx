@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useAppwrite from '@/appwrite_backend/useAppwrite';
-import { getOrgTasks, requestJoinOrg, submitActivity, leaveOrg } from '@/appwrite_backend/service';
+import { getOrgTasks, requestJoinOrg, submitActivity, leaveOrg, getCurrentUserOrgPrivilege } from '@/appwrite_backend/service';
 import Loading from '@/components/Loading';
 import CustomButton from '@/components/CustomButton';
 import { useAppwriteContext } from '@/appwrite_backend/AppwriteContext';
@@ -30,6 +30,8 @@ const Orgs = () => {
     const [snackbarVisible, setSnackbarVisible] = useState(false)
     const onDismissSnackBar = () => setSnackbarVisible(false);
     const [snackbarText, setSnackbarText] = useState("")
+
+    const { data: privilege } = useAppwrite(() => getCurrentUserOrgPrivilege(user["userId"], orgID))
 
     useFocusEffect(
         useCallback(() => {
@@ -123,6 +125,16 @@ const Orgs = () => {
         }
     }
 
+    const viewMemberTimesheets = async () => {
+        try {
+            setIsSubmitting(true);
+            router.push(`joinedOrg/submitted/${orgName}?orgID=${orgID}&privilege=${privilege}`)
+
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
     return (
         <SafeAreaView className='h-full mx-5'>
             <BackButton>
@@ -145,7 +157,7 @@ const Orgs = () => {
                             textStyles='text-base font-medium text-white'
                         />
                         <CustomButton
-                            title='View Submitted Timesheets'
+                            title='View My Submitted Timesheets'
                             handlePress={viewTimesheet}
                             containerStyles='mt-7 bg-black'
                             isLoading={isSubmitting}
@@ -158,6 +170,17 @@ const Orgs = () => {
                             isLoading={isSubmitting}
                             textStyles='text-base font-medium text-white'
                         />
+                        {privilege !== null && privilege !== undefined && (privilege === "board_member" || privilege === "mentor") ?
+                        <>
+                            <CustomButton
+                                title='Manage Members'
+                                handlePress={viewMemberTimesheets}
+                                containerStyles='mt-7 bg-black'
+                                isLoading={isSubmitting}
+                                textStyles='text-base font-medium text-white'
+                            />
+                        </>
+                        :<></>}
                         <CustomButton
                             title='Leave Organization'
                             handlePress={leave}
