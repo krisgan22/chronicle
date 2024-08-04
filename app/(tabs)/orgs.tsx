@@ -118,7 +118,7 @@ const Orgs = () => {
         <View className="flex justify-between items-start flex-row mb-6">
           <View>
             <Text className="text-2xl font-bold">
-              Your Organizations
+              Your Volunteer Organizations
             </Text>
           </View>
 

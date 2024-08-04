@@ -400,7 +400,8 @@ export async function updateActivity(taskID: any, userID: any, orgID: any, taskN
                 taskName: taskName,
                 start_date: start_date,
                 end_date: end_date,
-                submittedDate: new Date().toISOString()
+                // submittedDate: new Date().toISOString(),
+                taskStatus: "pending",
             });
             console.log("service.ts: submitActivity(): ", activityResult);
             return activityResult;

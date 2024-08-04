@@ -11,6 +11,11 @@ import SwitchSelector from "react-native-switch-selector";
 import BackButton from '@/components/BackButton';
 import { Snackbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomButton from '@/components/CustomButton';
+
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import Papa from 'papaparse';
 
 const SubmittedActivities = () => {
     const { user, setUser, setIsSignedIn} = useAppwriteContext();
@@ -74,7 +79,7 @@ const SubmittedActivities = () => {
         }
         else if (decision === "rejected")
         {
-            setSnackbarText("Successfully approved timesheet");
+            setSnackbarText("Successfully rejected timesheet");
             await decideTimesheet(timesheetID, decision);
         }
         else {
@@ -84,10 +89,73 @@ const SubmittedActivities = () => {
         setSnackbarVisible(true);
     }
 
+    const handleExportCsv = async () => {
+        try {
+
+        // Type for timesheet data 
+        type DataItem = {
+            desc:any,
+            userID:any,
+            orgID:any,
+            taskName:any,
+            start_date:any,
+            end_date: any,
+            taskStatus: any,
+            submittedDate: any,
+            $updatedAt: any,
+        }
+
+        // Fields and their mappings to include in the CSV
+        const fieldNames: { [key in keyof DataItem]?: string } = {
+            desc:'Description', 
+            userID:'User ID',
+            orgID:'Organization ID',
+            taskName:'Task',
+            start_date:'Start Date',
+            end_date: 'End Date',
+            taskStatus: 'Task Status',
+            submittedDate: 'Submitted Date',
+            $updatedAt: 'Updated Date'
+        };
+
+        // New list of objects with renamed keys
+        const mappedData = activities.map((item : any) => {
+            const mappedItem: { [key: string]: any } = {};
+            for (const key in item) {
+              if (fieldNames[key as keyof DataItem]) {
+                mappedItem[fieldNames[key as keyof DataItem]!] = item[key as keyof DataItem];
+              }
+            }
+            return mappedItem;
+          });
+
+        // Convert JSON to CSV
+        const csv = Papa.unparse(mappedData);
+
+        // Define file path
+        const fileUri = FileSystem.documentDirectory + 'timesheets.csv';
+
+        // Write CSV file to file system
+        await FileSystem.writeAsStringAsync(fileUri, csv);
+
+        // Open share menu
+        await Sharing.shareAsync(fileUri);
+        } catch (error) {
+            console.error('Error exporting CSV:', error);
+        }
+      };
+
     return (
         <SafeAreaView className='h-full'>
-            <View className='mx-5'>
+            <View className='flex flex-row justify-between mx-5'>
                 <BackButton></BackButton>
+                <CustomButton
+                    title='Export Data'
+                    handlePress={handleExportCsv}
+                    containerStyles='my-5 px-5 bg-cyan-500 rounded-full h-8 justify-center items-center'
+                    textStyles='text-white'
+                >
+                </CustomButton>
             </View>
             {/* {isLoading === true ? <Loading></Loading> : <></>} */}
             <View className='flex items-left mt-1 mb-6 ml-5'>

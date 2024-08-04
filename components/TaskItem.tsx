@@ -86,14 +86,14 @@ const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskSt
           <CustomButton
             title='edit'
             textStyles='px-5 text-slate-600'
-            handlePress={approvePress}
+            handlePress={editPress}
             containerStyles='h-5'
           >
           </CustomButton>
           <CustomButton
             title='delete'
             textStyles='text-rose-700'
-            handlePress={rejectPress}
+            handlePress={deletePress}
             containerStyles='h-5'
           >
           </CustomButton>

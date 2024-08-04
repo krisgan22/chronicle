@@ -23,7 +23,7 @@ type PersonItemProps = {
 
 const PersonItem = ({username, handlePress, privilege, first_name, last_name, employer, matching_rate, moneyContributed, hoursContributed, userID, orgID, kickPress, acceptPress, declinePress, hideButtons=true} : PersonItemProps ) => {
   return (
-    <TouchableOpacity className='bg-white p-5 rounded-md m-4'>
+    <TouchableOpacity className='bg-white p-5 rounded-md m-4' onPress={handlePress}>
       <View className='flex flex-row justify-between'>
         <View className='flex-1'>
             <Text className='text-lg font-bold'>{username}</Text>
@@ -62,7 +62,7 @@ const PersonItem = ({username, handlePress, privilege, first_name, last_name, em
         <>
             <CustomButton
                 title='accept'
-                textStyles='text-cyan-700'
+                textStyles='text-green-700'
                 handlePress={acceptPress}
                 containerStyles='h-5 mx-5'
             >  

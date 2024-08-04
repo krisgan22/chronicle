@@ -1,13 +1,14 @@
 import { View, Text, FlatList, RefreshControl } from 'react-native'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useAppwrite from '@/appwrite_backend/useAppwrite'
 import { acceptUserOrgJoinRequest, getCurrentUser, getCurrentUserOrgPrivilege, getOrgMembers, leaveOrg } from '@/appwrite_backend/service'
-import { useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import { useAppwriteContext } from '@/appwrite_backend/AppwriteContext'
 import SwitchSelector from "react-native-switch-selector";
 import PersonItem from '@/components/PersonItem'
 import { Snackbar } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native'
 
 const manageMembers = () => {
   const { user, userDetails } = useAppwriteContext();
@@ -54,6 +55,13 @@ const manageMembers = () => {
     await refetch();
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      onRefresh();
+    }, [])
+  );
+
+
   // const filteredData = members[0].documents.filter((item: any) => members[1][item.userID]["status"] === selectedUserStatus);
 
   return (
@@ -81,6 +89,9 @@ const manageMembers = () => {
         keyExtractor={(item : any) => item.$id}
         renderItem={({item}) => (
             <PersonItem
+              handlePress={() => {
+                router.push(`joinedOrg/members/viewMemberDetails?userID=${item.userID}&orgID=${orgID}&username=${item.username}&first_name=${item.first_name}&last_name=${item.last_name}&phone_num=${item.phone_num}&email=${item.email}&employer=${item.employer}&matching_rate=${item.matching_rate}&privilege=${members[1][item.userID]["privilege"]}&hideButtons=${user.userId === item.userID || privilege === "volunteer"}`)
+              }}
               username={item.username === userDetails.username ? item.username + " (You)" : item.username}
               privilege={members[1][item.userID]["privilege"]}
               first_name={item.first_name}
@@ -93,7 +104,7 @@ const manageMembers = () => {
                 kickUser(item.userID, orgID, item.username);
               }}
               acceptPress={() => {
-                acceptUser(item.userID, orgID, item.username, "volunteer")
+                acceptUser(item.userID, orgID, item.username, "volunteer") // currently just accepting any as level "volunteer"
               }}
               declinePress={() => {
                 declineUser(item.userID, orgID, item.username);
