@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Task } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import CustomButton from './CustomButton';
 
 type TaskItemProps = {
@@ -17,9 +17,13 @@ type TaskItemProps = {
     username?: string,
     approvePress?: (() => any),
     rejectPress?: (() => any),
+    approver_first_name?: string,
+    approver_last_name?: string,
+    text_response?: string,
+    approver_update_date?: string,
 }
 
-const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskStatus, subDate, startDate, endDate, desc, username, approvePress, rejectPress} : TaskItemProps) => {
+const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskStatus, subDate, startDate, endDate, desc, username, approvePress, rejectPress, approver_first_name, approver_last_name, text_response, approver_update_date} : TaskItemProps) => {
   
     const maxTaskLength = 25;
     const startDateObject: Date = new Date(startDate);
@@ -51,13 +55,19 @@ const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskSt
             <>
               <Text className='leading-8'>{username}</Text>
             </> : <></>}
-            <Text className='text-slate-400 leading-8 italic'>submitted {subDate}</Text>
+            <Text className='text-slate-500 leading-8 italic'>submitted {subDate}</Text>
         </View>
         <Text className={`leading-7 ${taskStatus == "pending" ? 'text-amber-500' : taskStatus == "approved" ? 'text-green-500' : 'text-rose-700'}`}>{taskStatus}</Text>
       </View>
       <View className='h-1 bg-slate-100 my-1 rounded-md'></View>
       <Text className='mt-1' numberOfLines={4}>{desc}</Text>
       <Text className='mt-2 text-slate-500'>{durationString}</Text>
+      {taskStatus === "approved" && (<>
+        <Text className='mt-2 text-slate-500 pb-4'>Approved by {approver_first_name} {approver_last_name} on {approver_update_date}</Text>
+      </>)}
+      {taskStatus === "rejected" && (<>
+        <Text className='mt-2 text-slate-500 pb-4'>Rejected by {approver_first_name} {approver_last_name} on {approver_update_date}</Text>
+      </>)}
       {username ? 
       <>
         <View className='flex-row justify-end'>

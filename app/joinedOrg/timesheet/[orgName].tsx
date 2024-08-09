@@ -46,7 +46,7 @@ const tsOrg = () => {
 
     const [dropdownFocus, setDropdownFocus] = useState(false)
     
-    const { user } = useAppwriteContext();
+    const { user, userDetails } = useAppwriteContext();
     const { orgName, orgID } = useLocalSearchParams();
 
     console.log("user: ", user.userId);
@@ -111,7 +111,16 @@ const tsOrg = () => {
                 console.log("START DATE: ", start_date);
                 console.log("END DATE: ", end_date);
                 
-                await submitActivity(user.userId, orgID, taskValue, form.desc, start_date.toISOString(), end_date.toISOString());
+                await submitActivity(
+                    user.userId, 
+                    orgID, 
+                    taskValue, 
+                    form.desc, 
+                    start_date.toISOString(),
+                    end_date.toISOString(),
+                    userDetails.first_name,
+                    userDetails.last_name,
+                );
                 await AsyncStorage.setItem("activitySubmitted", "Successfully submitted activity!");
                 router.back();
             } catch (error) {

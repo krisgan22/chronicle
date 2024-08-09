@@ -51,7 +51,7 @@ const PersonItem = ({username, handlePress, privilege, first_name, last_name, em
         privilege ?
         <>
             <CustomButton
-                title='kick'
+                title='remove'
                 textStyles='text-rose-700'
                 handlePress={kickPress}
                 containerStyles='h-5'

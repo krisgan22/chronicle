@@ -11,7 +11,7 @@ import BackButton from '@/components/BackButton';
 import { Snackbar } from 'react-native-paper';
 
 const ViewMemberDetails = () => {
-    const { userID, orgID, username, first_name, last_name, phone_num, email, employer, matching_rate, privilege, hideButtons} = useLocalSearchParams();
+    const { userID, orgID, username, first_name, last_name, phone_num, email, employer, matching_rate, status, hideButtons} = useLocalSearchParams();
     const { userDetails } = useAppwriteContext();
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [hideButtonBool, setHideButtonBool] = useState(true)
@@ -42,15 +42,18 @@ const ViewMemberDetails = () => {
         setHideButtonBool((hideButtons === 'true'))
     }, [])
 
+    console.log("hidebuttonbool: ", hideButtonBool);
+    console.log("privilege: ", status);
+
   return (
     <SafeAreaView className='h-full'>
         <View className='flex flex-row justify-between mx-5'>
             <BackButton></BackButton>
             {!hideButtonBool ? 
-                privilege ?
+                status == "accepted" ?
                 <>
                     <CustomButton
-                        title='kick'
+                        title='remove'
                         handlePress={() => {
                             kickUser(userID, orgID, username);
                         }}

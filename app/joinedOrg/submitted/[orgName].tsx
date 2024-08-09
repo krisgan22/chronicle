@@ -47,7 +47,7 @@ const SubmittedActivities = () => {
       );
 
     // Options for formatting
-    const options: Intl.DateTimeFormatOptions = {
+    const TimeOption: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -55,7 +55,13 @@ const SubmittedActivities = () => {
         minute: '2-digit',
     };
 
-    const dateReadable = (date: string) => {
+    const noTimeOption: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    };
+
+    const dateReadable = (date: string, options: Intl.DateTimeFormatOptions) => {
         const dateObject = new Date(date);
         return dateObject.toLocaleDateString('en-US', options);
     }
@@ -104,11 +110,15 @@ const SubmittedActivities = () => {
                         editPress={() => {
                             router.push(`joinedOrg/submitted/edit/${item.$id}?taskName=${item.taskName}&taskDesc=${item.desc}&startDate=${item.start_date}&endDate=${item.end_date}&orgID=${orgID}`)
                         }}
-                        taskStatus={item.taskStatus}
-                        subDate={dateReadable(item.submittedDate)}
+                        subDate={dateReadable(item.submittedDate, TimeOption)}
                         startDate={item.start_date}
                         endDate={item.end_date}
                         desc={item.desc}
+                        taskStatus={item.taskStatus}
+                        approver_first_name={item.approver_first_name}
+                        approver_last_name={item.approver_last_name}
+                        text_response={item.approver_last_name}
+                        approver_update_date={item.approver_update_date ? dateReadable(item.approver_update_date, noTimeOption) : item.approver_update_date}
                     >
                     </TaskItem>
                 )}

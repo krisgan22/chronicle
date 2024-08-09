@@ -90,7 +90,7 @@ const manageMembers = () => {
         renderItem={({item}) => (
             <PersonItem
               handlePress={() => {
-                router.push(`joinedOrg/members/viewMemberDetails?userID=${item.userID}&orgID=${orgID}&username=${item.username}&first_name=${item.first_name}&last_name=${item.last_name}&phone_num=${item.phone_num}&email=${item.email}&employer=${item.employer}&matching_rate=${item.matching_rate}&privilege=${members[1][item.userID]["privilege"]}&hideButtons=${user.userId === item.userID || privilege === "volunteer"}`)
+                router.push(`joinedOrg/members/viewMemberDetails?userID=${item.userID}&orgID=${orgID}&username=${item.username}&first_name=${item.first_name}&last_name=${item.last_name}&phone_num=${item.phone_num}&email=${item.email}&employer=${item.employer}&matching_rate=${item.matching_rate}&status=${members[1][item.userID]["status"]}&hideButtons=${user.userId === item.userID || privilege === "volunteer"}`)
               }}
               username={item.username === userDetails.username ? item.username + " (You)" : item.username}
               privilege={members[1][item.userID]["privilege"]}

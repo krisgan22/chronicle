@@ -291,7 +291,7 @@ export async function joinedOrgsAndContributions(userID: any, matching_rate: any
     }
 }
 
-export async function submitActivity(userID: any, orgID: any, taskName: any, desc: any, start_date: string, end_date: string)
+export async function submitActivity(userID: any, orgID: any, taskName: any, desc: any, start_date: string, end_date: string, user_first_name: string, user_last_name: string)
 {
     try {
         const activityResult = await databases.createDocument(
@@ -305,7 +305,9 @@ export async function submitActivity(userID: any, orgID: any, taskName: any, des
                 taskName: taskName,
                 start_date: start_date,
                 end_date: end_date,
-                submittedDate: new Date().toISOString()
+                submittedDate: new Date().toISOString(),
+                user_first_name: user_first_name,
+                user_last_name: user_last_name,
             });
             console.log("service.ts: submitActivity(): ", activityResult);
             return activityResult;
@@ -577,7 +579,7 @@ export async function getCurrentUserOrgPrivilege(userID: any, orgID: any)
     }
 }
 
-export async function decideTimesheet(timesheetID: any, decision: string)
+export async function decideTimesheet(timesheetID: any, approverID: any, approver_first_name: any, approver_last_name: any, text_response: any = "", decision: string)
 {
     try {
         const updateTimesheetRequest = await databases.updateDocument(
@@ -585,7 +587,12 @@ export async function decideTimesheet(timesheetID: any, decision: string)
             ACTIVITY_COLLECTION_ID,
             timesheetID,
             {
-                "taskStatus": decision
+                "taskStatus": decision,
+                "approverID": approverID,
+                "approver_first_name": approver_first_name,
+                "approver_last_name": approver_last_name,
+                "text_response":text_response,
+                "approver_update_date": new Date().toISOString(),
             }
         )
     } catch (error) {
