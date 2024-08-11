@@ -193,18 +193,22 @@ const SubmittedActivities = () => {
     //     setUserSet(new Set());
     // };
 
-    type FilterTypes = 'userIDs' | 'startDates' | 'endDates';
+    type FilterTypes = 'userIDs' | 'tasks';
+
+    const [earliestDate, setEarliestDate] = useState("");
+    const [latestDate, setLatestDate] = useState("");
+    
+    const [earliestDateFilter, setEarliestDateFilter] = useState("");
+    const [latestDateFilter, setLatestDateFilter] = useState("");
 
     const [uniqueItems, setUniqueItems] = useState({
         userIDs: new Set<string>(),
-        startDates: new Set<string>(),
-        endDates: new Set<string>(),
+        tasks: new Set<string>(),
     });
 
     const [filters, setFilters] = useState({
         userIDs: [] as string[],
-        startDates: [] as string[],
-        endDates: [] as string[],   
+        tasks: [] as string[],
     });
 
     const overwriteFilterList = (items: string[], type: FilterTypes) => {
@@ -265,20 +269,20 @@ const SubmittedActivities = () => {
         });
       };
   
-      const removeItemFromUniques = (item: string, type: FilterTypes) => {
-        setUniqueItems(prevUniques => {
-            const updatedSet = new Set(
-                prevUniques[type] as Set<string> 
-            );
+    //   const removeItemFromUniques = (item: string, type: FilterTypes) => {
+    //     setUniqueItems(prevUniques => {
+    //         const updatedSet = new Set(
+    //             prevUniques[type] as Set<string> 
+    //         );
         
-            updatedSet.delete(item); // Remove the item from the Set
+    //         updatedSet.delete(item); // Remove the item from the Set
         
-            return {
-              ...prevUniques,
-              [type]: updatedSet,
-            };
-          });
-    };
+    //         return {
+    //           ...prevUniques,
+    //           [type]: updatedSet,
+    //         };
+    //       });
+    // };
 
     // const overwriteFilter = (items: string[], type: FilterTypes) => {
     //     setFilters(prevFilters => {
@@ -291,7 +295,8 @@ const SubmittedActivities = () => {
     //     });
     //   };
 
-    const [flatListData, setFlatListData] = useState<{ label: string; value: string }[]>([]);
+    const [filterUserData, setFilterUserData] = useState<{ label: string; value: string }[]>([]);
+    const [filterTaskData, setFilterTaskData] = useState<{ label: string; value: string }[]>([]);
 
     useEffect(() => {
         if (activities)
@@ -299,11 +304,28 @@ const SubmittedActivities = () => {
             activities.forEach((item : any) => {
                 console.log(item.userID + ":" + item.user_first_name + " " + item.user_last_name)
                 addItemToUniques(item.userID + ":" + item.user_first_name + " " + item.user_last_name, "userIDs")
-                addItemToUniques(item.start_date, "startDates");
-                addItemToUniques(item.end_date, "endDates");
+                addItemToUniques(item.taskName, "tasks");
             });
 
-            const mappedData = Array.from(uniqueItems.userIDs).map(user => {
+            const { earliestDate, latestDate } = activities.reduce((acc: any, item:any) => {
+                const itemStartDate = new Date(item.start_date);
+                const itemEndDate = new Date(item.end_date);
+              
+                if (!acc.earliestDate || itemStartDate < new Date(acc.earliestDate)) {
+                  acc.earliestDate = item.start_date;
+                }
+              
+                if (!acc.latestDate || itemEndDate > new Date(acc.latestDate)) {
+                  acc.latestDate = item.end_date;
+                }
+              
+                return acc;
+            }, { earliestDate: null as string | null, latestDate: null as string | null });
+            
+            setEarliestDate(earliestDate);
+            setLatestDate(latestDate);
+
+            const mappedUserData = Array.from(uniqueItems.userIDs).map(user => {
                 const [userID, username] = user.split(':');
                 return {
                   label: username,
@@ -311,19 +333,31 @@ const SubmittedActivities = () => {
                 };
             });
           
-            setFlatListData(mappedData);
+            setFilterUserData(mappedUserData);
+
+            const mappedTaskData = Array.from(uniqueItems.tasks).map(task => {
+                return {
+                    label: task,
+                    value: task,
+                }
+            })
+
+            setFilterTaskData(mappedTaskData);
         }
-        console.log("FILTERS: ", filters);
-        console.log("UNIQUES: ", uniqueItems);
-        console.log("FLATLIST DATA: ", flatListData);
+        // console.log("FILTERS: ", filters);
+        // console.log("UNIQUES: ", uniqueItems);
+        // console.log("FLATLIST DATA: ", flatListData);
     }, [activities])
 
     const filteredActivities = useMemo(() => {
         return activities.filter((item : any) => {
           let matches = true;
 
-          const itemStartDate = new Date(item.startDate);
-          const itemEndDate = new Date(item.endDate);
+          const itemStartDate = new Date(item.start_date);
+        //   const itemEndDate = new Date(item.endDate);
+
+        console.log("EARLIEST DATE FILTER: ", earliestDateFilter);
+        // console.log("LATEST DATE FILTER: ", latestDateFilter);
 
           if (item.taskStatus !== selectedStatus) {
             matches = false
@@ -332,6 +366,20 @@ const SubmittedActivities = () => {
           if (filters.userIDs.length > 0 && !filters.userIDs.includes(item.userID + ":" + item.user_first_name + " " + item.user_last_name)) {
             matches = false;
           }
+
+          if (filters.tasks.length > 0 && !filters.tasks.includes(item.taskName)) {
+            matches = false;
+          }
+
+          if (earliestDateFilter && itemStartDate < new Date(earliestDateFilter)) {
+            matches = false
+          }
+
+          if (latestDateFilter && itemStartDate > new Date(latestDateFilter))
+          {
+            matches = false
+          }
+      
       
         //   if (filters.startDates.size > 0 && !Array.from(filters.startDates).some(date => new Date(date) <= itemStartDate)) {
         //     matches = false;
@@ -492,10 +540,20 @@ const SubmittedActivities = () => {
             />
             <FilterBottomSheetModal
                 ref={filterModalRef}
-                userData={flatListData}
+                userData={filterUserData}
                 confirmedUserDataList={filters.userIDs}
-                setConfirmedUserDataList={overwriteFilterList}
+
+                taskData={filterTaskData}
+                confirmedTaskDataList={filters.tasks}
+
+                setConfirmedLists={overwriteFilterList}
                 dismiss={dismissFilterModal}
+
+                earliestDate={earliestDate}
+                latestDate={latestDate}
+
+                setEarliestDateFilter = {setEarliestDateFilter}
+                setLatestDateFilter = {setLatestDateFilter}
             />
         </SafeAreaView>
     )
