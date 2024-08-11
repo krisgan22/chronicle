@@ -1,9 +1,13 @@
 import AppwriteProvider from "@/appwrite_backend/AppwriteContext";
 import { StatusBar } from "expo-status-bar";
 import { Stack } from "expo-router";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 export default function RootLayout() {
   return (
+    <GestureHandlerRootView>
+    <BottomSheetModalProvider>
     <AppwriteProvider>
       <Stack>
         <Stack.Screen name="index" options={{headerShown: false}}/>
@@ -21,5 +25,7 @@ export default function RootLayout() {
       </Stack>
       <StatusBar style="dark"></StatusBar>
     </AppwriteProvider>
+    </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }

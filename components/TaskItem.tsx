@@ -66,7 +66,18 @@ const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskSt
         <Text className='mt-2 text-slate-500 pb-4'>Approved by {approver_first_name} {approver_last_name} on {approver_update_date}</Text>
       </>)}
       {taskStatus === "rejected" && (<>
-        <Text className='mt-2 text-slate-500 pb-4'>Rejected by {approver_first_name} {approver_last_name} on {approver_update_date}</Text>
+        <Text className='mt-2 text-slate-500'>Rejected by {approver_first_name} {approver_last_name} on {approver_update_date}</Text>
+        {text_response && (<>
+        <Text className='text-slate-500'>Approver Message: {text_response}</Text>
+        </>)}
+        <View className='pb-4'></View>
+      </>)}
+      {taskStatus === "pending" && approver_update_date && (<>
+        <Text className='mt-2 text-slate-500'>Last Rejection by {approver_first_name} {approver_last_name} on {approver_update_date}</Text>
+        {text_response && (<>
+        <Text className='text-slate-500'>Approver Message: {text_response}</Text>
+        </>)}
+        <View className='pb-4'></View>
       </>)}
       {username ? 
       <>

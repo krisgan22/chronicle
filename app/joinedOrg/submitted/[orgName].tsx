@@ -1,5 +1,5 @@
 import { View, Text, FlatList, RefreshControl } from 'react-native'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { deleteActivity, getSubmittedActivities } from '@/appwrite_backend/service'
 import useAppwrite from '@/appwrite_backend/useAppwrite';
 import { useAppwriteContext } from '@/appwrite_backend/AppwriteContext';
@@ -44,7 +44,7 @@ const SubmittedActivities = () => {
               showEditMsg();
             onRefresh();
         }, [])
-      );
+    );
 
     // Options for formatting
     const TimeOption: Intl.DateTimeFormatOptions = {
@@ -117,7 +117,7 @@ const SubmittedActivities = () => {
                         taskStatus={item.taskStatus}
                         approver_first_name={item.approver_first_name}
                         approver_last_name={item.approver_last_name}
-                        text_response={item.approver_last_name}
+                        text_response={item.text_response}
                         approver_update_date={item.approver_update_date ? dateReadable(item.approver_update_date, noTimeOption) : item.approver_update_date}
                     >
                     </TaskItem>

@@ -1,5 +1,5 @@
 import { View, Text, FlatList, RefreshControl } from 'react-native'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { decideTimesheet, deleteActivity, getAllSubmittedActivities, getSubmittedActivities } from '@/appwrite_backend/service'
 import useAppwrite from '@/appwrite_backend/useAppwrite';
 import { useAppwriteContext } from '@/appwrite_backend/AppwriteContext';
@@ -17,6 +17,9 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import Papa from 'papaparse';
 import FormFieldTextArea from '@/components/FormFieldTextArea';
+import BottomSheet, { BottomSheetModal, useBottomSheet, useBottomSheetModal } from '@gorhom/bottom-sheet';
+import DecisionBottomSheetModal from '@/components/DecisionBottomSheetModal';
+import FilterBottomSheetModal from '@/components/FilterBottomSheetModal';
 
 const SubmittedActivities = () => {
     const { user, userDetails } = useAppwriteContext();
@@ -24,7 +27,7 @@ const SubmittedActivities = () => {
     const { data: activities, isLoading, refetch } = useAppwrite(() => getAllSubmittedActivities(orgID))
     const [selectedStatus, setSelectedStatus] = useState<string>("pending")
 
-    console.log("SubmittedActivities ([orgName].tsx): ", activities);
+    // console.log("SubmittedActivities ([orgName].tsx): ", activities);
     
     const [snackbarVisible, setSnackbarVisible] = useState(false)
     const onDismissSnackBar = () => setSnackbarVisible(false);
@@ -78,16 +81,16 @@ const SubmittedActivities = () => {
         { label: "Rejected", value: "rejected"}
       ];
 
-    const updateTimesheetDecision = async (timesheetID: any, decision: string) => {
+    const updateTimesheetDecision = async (timesheetID: any, decision: string, reason: string = "") => {
         if (decision === "approved")
         {
             setSnackbarText("Successfully approved timesheet");
-            await decideTimesheet(timesheetID, user.userId, userDetails.first_name, userDetails.last_name, "", decision);
+            await decideTimesheet(timesheetID, user.userId, userDetails.first_name, userDetails.last_name, reason, decision);
         }
         else if (decision === "rejected")
         {
             setSnackbarText("Successfully rejected timesheet");
-            await decideTimesheet(timesheetID, user.userId, userDetails.first_name, userDetails.last_name, "", decision);
+            await decideTimesheet(timesheetID, user.userId, userDetails.first_name, userDetails.last_name, reason, decision);
         }
         else {
             setSnackbarText("There was an error, try again");  
@@ -152,23 +155,261 @@ const SubmittedActivities = () => {
         }
     };
     
+    const [modalTaskID, setModalTaskID] = useState("");
+    const [decisionReason, setDecisionReason] = useState("")
+    
+    const decisionModalRef = useRef<BottomSheetModal>(null);
+    const { dismiss:decisionModalDismiss } = useBottomSheetModal();
+    const handlePresentModalPress = (taskID: string) => {
+        setModalTaskID(taskID);
+        decisionModalRef.current?.present();
+    }
+
+    const filterModalRef = useRef<BottomSheetModal>(null);
+    const { dismiss:dismissFilterModal } = useBottomSheetModal();
+    const handlePresentFilterModalPress = () => {
+        filterModalRef.current?.present();
+    }
+    
+    // const [userSet, setUserSet] = useState<Set<string>>(new Set())
+    // const [startDateSet, setStartDateSet] = useState<Set<Date>>(new Set())
+    // const [endDateSet, setEndDateSet] = useState<Set<Date>>(new Set())
+    // const [userSelections, ]
+
+    // const addToSet = (item: any, func: (e: any) => void) => {
+    //     func((prevSet:any) => new Set(prevSet).add(item));
+    // };
+    // const removeFromSet = (item: any) => {
+    //     setUserSet(prevSet => {
+    //       const newSet = new Set(prevSet);
+    //       newSet.delete(item);
+    //       return newSet;
+    //     });
+    // };
+    // const hasItem = (item: any) => {
+    //     return userSet.has(item);
+    // };
+    //   const clearSet = () => {
+    //     setUserSet(new Set());
+    // };
+
+    type FilterTypes = 'userIDs' | 'startDates' | 'endDates';
+
+    const [uniqueItems, setUniqueItems] = useState({
+        userIDs: new Set<string>(),
+        startDates: new Set<string>(),
+        endDates: new Set<string>(),
+    });
+
+    const [filters, setFilters] = useState({
+        userIDs: [] as string[],
+        startDates: [] as string[],
+        endDates: [] as string[],   
+    });
+
+    const overwriteFilterList = (items: string[], type: FilterTypes) => {
+        setFilters(prevFilters => ({
+          ...prevFilters,
+          [type]: items,
+        }));
+    };
+
+    // const [filters, setFilters] = useState({
+    //     userIDs: new Set<string>(),
+    //     startDates: new Set<string>(),
+    //     endDates: new Set<string>(),
+    // });
+
+    // const addItemToFilter = (item: string, type: FilterTypes) => {
+    //   setFilters(prevFilters => {
+    //     const updatedSet = new Set(
+    //       prevFilters[type] as Set<string> 
+    //     );
+    
+    //     updatedSet.add(item);
+    
+    //     return {
+    //       ...prevFilters,
+    //       [type]: updatedSet,
+    //     };
+    //   });
+    // };
+
+    // const removeItemFromFilter = (item: string, type: FilterTypes) => {
+    //     setFilters(prevFilters => {
+    //       const updatedSet = new Set(
+    //         prevFilters[type] as Set<string> 
+    //       );
+      
+    //       updatedSet.delete(item); // Remove the item from the Set
+      
+    //       return {
+    //         ...prevFilters,
+    //         [type]: updatedSet,
+    //       };
+    //     });
+    // };
+
+    const addItemToUniques = (item: string, type: FilterTypes) => {
+        setUniqueItems(prevUniques => {
+          const updatedSet = new Set(
+            prevUniques[type] as Set<string> 
+          );
+      
+          updatedSet.add(item);
+      
+          return {
+            ...prevUniques,
+            [type]: updatedSet,
+          };
+        });
+      };
+  
+      const removeItemFromUniques = (item: string, type: FilterTypes) => {
+        setUniqueItems(prevUniques => {
+            const updatedSet = new Set(
+                prevUniques[type] as Set<string> 
+            );
+        
+            updatedSet.delete(item); // Remove the item from the Set
+        
+            return {
+              ...prevUniques,
+              [type]: updatedSet,
+            };
+          });
+    };
+
+    // const overwriteFilter = (items: string[], type: FilterTypes) => {
+    //     setFilters(prevFilters => {
+    //       const newSet = new Set(items);
+      
+    //       return {
+    //         ...prevFilters,
+    //         [type]: newSet,
+    //       };
+    //     });
+    //   };
+
+    const [flatListData, setFlatListData] = useState<{ label: string; value: string }[]>([]);
+
+    useEffect(() => {
+        if (activities)
+        {
+            activities.forEach((item : any) => {
+                console.log(item.userID + ":" + item.user_first_name + " " + item.user_last_name)
+                addItemToUniques(item.userID + ":" + item.user_first_name + " " + item.user_last_name, "userIDs")
+                addItemToUniques(item.start_date, "startDates");
+                addItemToUniques(item.end_date, "endDates");
+            });
+
+            const mappedData = Array.from(uniqueItems.userIDs).map(user => {
+                const [userID, username] = user.split(':');
+                return {
+                  label: username,
+                  value: user
+                };
+            });
+          
+            setFlatListData(mappedData);
+        }
+        console.log("FILTERS: ", filters);
+        console.log("UNIQUES: ", uniqueItems);
+        console.log("FLATLIST DATA: ", flatListData);
+    }, [activities])
+
+    const filteredActivities = useMemo(() => {
+        return activities.filter((item : any) => {
+          let matches = true;
+
+          const itemStartDate = new Date(item.startDate);
+          const itemEndDate = new Date(item.endDate);
+
+          if (item.taskStatus !== selectedStatus) {
+            matches = false
+          }
+      
+          if (filters.userIDs.length > 0 && !filters.userIDs.includes(item.userID + ":" + item.user_first_name + " " + item.user_last_name)) {
+            matches = false;
+          }
+      
+        //   if (filters.startDates.size > 0 && !Array.from(filters.startDates).some(date => new Date(date) <= itemStartDate)) {
+        //     matches = false;
+        //   }
+      
+        //   if (filters.endDates.size > 0 && !Array.from(filters.endDates).some(date => new Date(date) >= itemEndDate)) {
+        //     matches = false;
+        //   }
+      
+          return matches;
+        });
+    }, [activities, filters, selectedStatus]);
+
+    // const filteredActivitiesNoMemo = activities.filter((item: any) => {
+    //     let matches = true;
+      
+    //     if (filters.userIDs.size > 0 && filters.userIDs.has(item.username)) {
+    //       matches = false;
+    //     }
+      
+    //     if (filters.startDates.size > 0 && Array.from(filters.startDates).some(date => new Date(date) <= item.startDate)) {
+    //       matches = false;
+    //     }
+      
+    //     if (filters.endDates.size > 0 && Array.from(filters.endDates).some(date => new Date(date) >= item.endDate)) {
+    //       matches = false;
+    //     }
+      
+    //     return matches;
+    // });
+
+    const addFilterTest = () => {
+        overwriteFilterList(["66a6ce230022578fb676:New Signup"], "userIDs");
+    }
+
+    const delFilterTest = () => {
+        overwriteFilterList([], "userIDs");
+    }
+
     return (
         <SafeAreaView className='h-full'>
             <View className='flex flex-row justify-between mx-5'>
                 <BackButton></BackButton>
-                <CustomButton
-                    title='Export Data'
-                    handlePress={handleExportCsv}
-                    containerStyles='my-5 px-5 bg-cyan-500 rounded-full h-8 justify-center items-center'
-                    textStyles='text-white'
-                >
-                </CustomButton>
+                <View className='flex flex-row'>
+                    <CustomButton
+                        handlePress={handlePresentFilterModalPress}
+                        title='Filter'
+                        containerStyles='my-5 px-5 bg-gray-500 rounded-full h-8 justify-center items-center mr-5'
+                        textStyles='text-white'
+                    />
+                    {/* <CustomButton
+                        handlePress={addFilterTest}
+                        title='add'
+                        containerStyles='my-5 px-5 bg-green-500 rounded-full h-8 justify-center items-center'
+                        textStyles='text-white'
+                    >
+                    </CustomButton>
+                    <CustomButton
+                        handlePress={delFilterTest}
+                        title='del'
+                        containerStyles='my-5 px-5 bg-rose-500 rounded-full h-8 justify-center items-center'
+                        textStyles='text-white'
+                    >
+                    </CustomButton> */}
+                    <CustomButton
+                        title='Export Data'
+                        handlePress={handleExportCsv}
+                        containerStyles='my-5 px-5 bg-cyan-500 rounded-full h-8 justify-center items-center'
+                        textStyles='text-white'
+                    >
+                    </CustomButton>
+                </View>
             </View>
             {/* {isLoading === true ? <Loading></Loading> : <></>} */}
             <View className='flex items-left mt-1 mb-6 ml-5'>
                 <Text className='text-3xl font-bold text-black'>Manage Timesheets</Text>
             </View>
-            <View className='mx-10'>
+            <View className='mx-10 pb-5'>
                 <SwitchSelector
                     options={taskStatusOptions}
                     initial={0}
@@ -178,7 +419,8 @@ const SubmittedActivities = () => {
                 />
             </View>
             <FlatList
-                data={activities.filter((item: any) => item.taskStatus === selectedStatus)}
+                // data={activities.filter((item: any) => item.taskStatus === selectedStatus)}
+                data={filteredActivities}
                 keyExtractor={(item : any) => item.$id}
                 renderItem={({item}) => (
                     <TaskItem
@@ -204,10 +446,12 @@ const SubmittedActivities = () => {
                         desc={item.desc}
                         username={item.user_first_name + " " + item.user_last_name}
                         approvePress={() => updateTimesheetDecision(item.$id, "approved")}
-                        rejectPress={() => updateTimesheetDecision(item.$id, "rejected")}
+                        // rejectPress={() => updateTimesheetDecision(item.$id, "rejected")}
+                        rejectPress={() => handlePresentModalPress(item.$id)}
                         approver_first_name={item.approver_first_name}
                         approver_last_name={item.approver_last_name}
                         approver_update_date={item.approver_update_date ? dateReadable(item.approver_update_date, noTimeOption) : item.approver_update_date}
+                        text_response={item.text_response}
                     >
                     </TaskItem>
                 )}
@@ -235,7 +479,24 @@ const SubmittedActivities = () => {
                 >
                 {snackbarText}
             </Snackbar>
-            
+            <DecisionBottomSheetModal 
+                ref={decisionModalRef}
+                taskID={modalTaskID}
+                decisionPress={() => {
+                    updateTimesheetDecision(modalTaskID, "rejected", decisionReason)
+                    setDecisionReason("");
+                    decisionModalDismiss();
+                }}
+                textInput={decisionReason}
+                handleTextInput={setDecisionReason}
+            />
+            <FilterBottomSheetModal
+                ref={filterModalRef}
+                userData={flatListData}
+                confirmedUserDataList={filters.userIDs}
+                setConfirmedUserDataList={overwriteFilterList}
+                dismiss={dismissFilterModal}
+            />
         </SafeAreaView>
     )
 }

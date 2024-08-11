@@ -136,7 +136,8 @@ const Orgs = () => {
     }
 
     return (
-        <SafeAreaView className='h-full mx-5'>
+        <SafeAreaView className='h-full'>
+            <View className='mx-5'>
             <BackButton>
             </BackButton>
             <ScrollView>
@@ -196,6 +197,7 @@ const Orgs = () => {
                 onDismiss={onDismissSnackBar}>
                 {snackbarText}
             </Snackbar>
+            </View>
         </SafeAreaView>
     )
 }
