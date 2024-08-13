@@ -174,11 +174,29 @@ export async function getOrgTasks(orgID: any)
             [Query.equal("$id", [orgID])]
         );
         console.log("service.ts: getOrgTasks(): ", orgTaskQuery)
-        const formattedTasks = orgTaskQuery.documents[0]['tasks'].map((task: string) => ({ taskName: task}))
+        const formattedTasks = orgTaskQuery.documents[0]['tasks'].map((task: string, index: number) => ({ taskName: task, id: index}))
         // return orgTaskQuery.documents[0]['tasks'];
         return formattedTasks;
     } catch (error) {
         console.log("service.ts: getOrgTasks(): ", error);
+    }
+}
+
+export async function setOrgTasks(orgID: any, taskList: string[])
+{
+    try {
+        const setTaskRequest = await databases.updateDocument(
+            DATABASE_ID,
+            ORG_COLLECTION_ID,
+            orgID,
+            {
+                tasks: taskList
+            }
+        );
+        console.log(setTaskRequest);
+        return setTaskRequest;
+    } catch (error) {
+        console.log("service.ts: setOrgTasks(): ", error);
     }
 }
 

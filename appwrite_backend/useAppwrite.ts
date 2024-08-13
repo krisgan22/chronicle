@@ -26,7 +26,7 @@ const useAppwrite = (fn: () => any) => {
 
     const refetch = () => fetchData();
 
-    return { data, isLoading, refetch };
+    return { data, setData, isLoading, setIsLoading, refetch };
 }
 
 export default useAppwrite;

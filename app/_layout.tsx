@@ -21,6 +21,7 @@ export default function RootLayout() {
         <Stack.Screen name={`joinedOrg/members/manageMembers`} options={{headerShown: false}} />
         <Stack.Screen name={`joinedOrg/members/viewMemberDetails`} options={{headerShown: false}} />
         <Stack.Screen name={`joinedOrg/manageSubmitted/[orgName]`} options={{headerShown: false}} />
+        <Stack.Screen name={`joinedOrg/manageTasks/[orgName]`} options={{headerShown: false}} />
         
       </Stack>
       <StatusBar style="dark"></StatusBar>

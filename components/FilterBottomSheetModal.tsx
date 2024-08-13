@@ -27,18 +27,6 @@ type Props = {
 
 type Ref = BottomSheetModal
 
-const renderBackdrop = useCallback(
-  (props : any) => (
-    <BottomSheetBackdrop
-      {...props}
-      disappearsOnIndex={-1}
-      appearsOnIndex={0}
-      enableTouchThrough={false}
-    />
-  ),
-  []
-);
-
 const data = new Set ([
     { label: 'Item 1', value: '1' },
     { label: 'Item 2', value: '2' },
@@ -52,6 +40,18 @@ const data = new Set ([
   ]);
 
 const FilterBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
+    const renderBackdrop = useCallback(
+      (props : any) => (
+        <BottomSheetBackdrop
+          {...props}
+          disappearsOnIndex={-1}
+          appearsOnIndex={0}
+          enableTouchThrough={false}
+        />
+      ),
+      []
+    );
+
     const snapPoints = useMemo(() => ["80%"] , []);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [selectedTasks, setSelectedTasks] = useState([]);

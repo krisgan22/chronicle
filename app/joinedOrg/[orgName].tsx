@@ -135,6 +135,16 @@ const Orgs = () => {
         }
     }
 
+    const manageTasks = async () => {
+        try {
+            setIsSubmitting(true);
+            router.push(`joinedOrg/manageTasks/${orgName}?orgID=${orgID}`)
+
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
     return (
         <SafeAreaView className='h-full'>
             <View className='mx-5'>
@@ -177,6 +187,13 @@ const Orgs = () => {
                                 title='View Member Timesheets'
                                 handlePress={viewMemberTimesheets}
                                 containerStyles='mt-7 bg-cyan-700'
+                                isLoading={isSubmitting}
+                                textStyles='text-base font-medium text-white'
+                            />
+                            <CustomButton
+                                title='Manage Tasks'
+                                handlePress={manageTasks}
+                                containerStyles='mt-7 bg-fuchsia-700'
                                 isLoading={isSubmitting}
                                 textStyles='text-base font-medium text-white'
                             />

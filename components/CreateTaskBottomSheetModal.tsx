@@ -6,14 +6,13 @@ import CustomButton from './CustomButton'
 type Props = {
     textInput: string,
     handleTextInput:  ((e : any) => any),
-    decisionPress: ((taskID: string, decision: string, reason: string) => any),
+    decisionPress: (() => any),
     isSubmitting?: boolean,
-    taskID: string,
 }
 
 type Ref = BottomSheetModal
 
-const DecisionBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
+const CreateTaskBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
 
   const renderBackdrop = useCallback(
     (props : any) => (
@@ -35,7 +34,7 @@ const DecisionBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
         backdropComponent={renderBackdrop}
         >
         <View className='mx-5'>
-            <Text className='my-2 font-medium'>Decision Reason (Optional)</Text>
+            <Text className='my-2 font-medium'>Task Name</Text>
             <BottomSheetTextInput 
                 placeholder='Why did you choose this decision?'
                 placeholderTextColor='grey'
@@ -43,11 +42,12 @@ const DecisionBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
                 value={props.textInput}
                 onChangeText={props.handleTextInput}
                 autoCorrect={true}
+                autoCapitalize='words'
                 />
             <CustomButton
-                title='Reject'
-                handlePress={() => props.decisionPress(props.taskID, "rejected", props.textInput)}
-                containerStyles='mt-5 bg-rose-700'
+                title='Create'
+                handlePress={props.decisionPress}
+                containerStyles='mt-5 bg-green-500'
                 isLoading={props.isSubmitting}
                 textStyles='text-base font-medium text-white'
             />
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
   });
   
 
-export default DecisionBottomSheetModal
+export default CreateTaskBottomSheetModal
