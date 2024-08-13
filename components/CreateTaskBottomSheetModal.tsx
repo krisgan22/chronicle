@@ -36,7 +36,7 @@ const CreateTaskBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
         <View className='mx-5'>
             <Text className='my-2 font-medium'>Task Name</Text>
             <BottomSheetTextInput 
-                placeholder='Why did you choose this decision?'
+                placeholder="What's the name of this task?"
                 placeholderTextColor='grey'
                 style={styles.textInput} 
                 value={props.textInput}
