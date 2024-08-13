@@ -104,6 +104,12 @@ const SubmittedActivities = () => {
 
         // Type for timesheet data 
         type DataItem = {
+            user_first_name:any,
+            user_last_name:any,
+            approver_first_name:any,
+            approver_last_name:any,
+            text_response:any,
+            approver_update_date:any,
             desc:any,
             userID:any,
             orgID:any,
@@ -117,19 +123,23 @@ const SubmittedActivities = () => {
 
         // Fields and their mappings to include in the CSV
         const fieldNames: { [key in keyof DataItem]?: string } = {
-            desc:'Description', 
-            userID:'User ID',
-            orgID:'Organization ID',
+            user_first_name:"Volunteer First Name",
+            user_last_name:"Volunteer Last Name",
             taskName:'Task',
+            desc:'Description', 
+            // userID:'User ID',
+            // orgID:'Organization ID',
             start_date:'Start Date',
             end_date: 'End Date',
             taskStatus: 'Task Status',
             submittedDate: 'Submitted Date',
-            $updatedAt: 'Updated Date'
+            approver_first_name:"Approver First Name",
+            approver_last_name:"Approver Last Name",
+            approver_update_date:"Approver Decision Date"
         };
 
         // New list of objects with renamed keys
-        const mappedData = activities.map((item : any) => {
+        const mappedData = filteredActivities.map((item : any) => {
             const mappedItem: { [key: string]: any } = {};
             for (const key in item) {
               if (fieldNames[key as keyof DataItem]) {

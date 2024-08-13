@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Platform, Alert } from 'react-native'
-import React, { forwardRef, useEffect, useMemo, useState } from 'react'
-import { BottomSheetModal, BottomSheetScrollView, BottomSheetTextInput, BottomSheetView } from '@gorhom/bottom-sheet'
+import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react'
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetTextInput, BottomSheetView } from '@gorhom/bottom-sheet'
 import CustomButton from './CustomButton'
 import { MultiSelect } from 'react-native-element-dropdown';
 import RNDateTimePicker, { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -26,6 +26,18 @@ type Props = {
 }
 
 type Ref = BottomSheetModal
+
+const renderBackdrop = useCallback(
+  (props : any) => (
+    <BottomSheetBackdrop
+      {...props}
+      disappearsOnIndex={-1}
+      appearsOnIndex={0}
+      enableTouchThrough={false}
+    />
+  ),
+  []
+);
 
 const data = new Set ([
     { label: 'Item 1', value: '1' },
@@ -138,6 +150,7 @@ const FilterBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
         snapPoints={snapPoints}
         keyboardBehavior='interactive'
         keyboardBlurBehavior='restore'
+        backdropComponent={renderBackdrop}
         >
         <View className='h-full mx-5'>
             <MultiSelect

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native'
-import React, { forwardRef, useMemo } from 'react'
-import { BottomSheetModal, BottomSheetTextInput } from '@gorhom/bottom-sheet'
+import React, { forwardRef, useCallback, useMemo } from 'react'
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetTextInput } from '@gorhom/bottom-sheet'
 import CustomButton from './CustomButton'
 
 type Props = {
@@ -13,6 +13,17 @@ type Props = {
 
 type Ref = BottomSheetModal
 
+const renderBackdrop = useCallback(
+  (props : any) => (
+    <BottomSheetBackdrop
+      {...props}
+      disappearsOnIndex={-1}
+      appearsOnIndex={0}
+      enableTouchThrough={false}
+    />
+  ),
+  []
+);
 
 const DecisionBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
     const snapPoints = useMemo(() => ["30%"], []);
@@ -20,7 +31,7 @@ const DecisionBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
     <BottomSheetModal 
         ref={ref}
         snapPoints={snapPoints}
-        
+        backdropComponent={renderBackdrop}
         >
         <View className='mx-5'>
             <Text className='my-2 font-medium'>Decision Reason (Optional)</Text>
