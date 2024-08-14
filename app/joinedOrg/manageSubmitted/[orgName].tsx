@@ -499,6 +499,7 @@ const SubmittedActivities = () => {
                         }}
                         taskStatus={item.taskStatus}
                         subDate={dateReadable(item.submittedDate, TimeOption)}
+                        subDateUnformatted={item.submittedDate}
                         startDate={item.start_date}
                         endDate={item.end_date}
                         desc={item.desc}
@@ -509,7 +510,10 @@ const SubmittedActivities = () => {
                         approver_first_name={item.approver_first_name}
                         approver_last_name={item.approver_last_name}
                         approver_update_date={item.approver_update_date ? dateReadable(item.approver_update_date, noTimeOption) : item.approver_update_date}
+                        approver_update_date_unformatted={item.approver_update_date}
                         text_response={item.text_response}
+                        user_first_name={item.user_first_name}
+                        user_last_name={item.user_last_name}
                     >
                     </TaskItem>
                 )}

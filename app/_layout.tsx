@@ -22,7 +22,7 @@ export default function RootLayout() {
         <Stack.Screen name={`joinedOrg/members/viewMemberDetails`} options={{headerShown: false}} />
         <Stack.Screen name={`joinedOrg/manageSubmitted/[orgName]`} options={{headerShown: false}} />
         <Stack.Screen name={`joinedOrg/manageTasks/[orgName]`} options={{headerShown: false}} />
-        
+        <Stack.Screen name={`joinedOrg/viewTaskDetails/[taskID]`} options={{headerShown: false}} />
       </Stack>
       <StatusBar style="dark"></StatusBar>
     </AppwriteProvider>

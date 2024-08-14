@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import CustomButton from './CustomButton';
@@ -14,6 +14,8 @@ type TaskItemProps = {
     startDate: string,
     endDate: string,
     desc: string,
+    user_first_name?: string,
+    user_last_name?: string,
     username?: string,
     approvePress?: (() => any),
     rejectPress?: (() => any),
@@ -21,9 +23,11 @@ type TaskItemProps = {
     approver_last_name?: string,
     text_response?: string,
     approver_update_date?: string,
+    approver_update_date_unformatted?:string,
+    subDateUnformatted?:string,
 }
 
-const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskStatus, subDate, startDate, endDate, desc, username, approvePress, rejectPress, approver_first_name, approver_last_name, text_response, approver_update_date} : TaskItemProps) => {
+const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskStatus, subDate, startDate, endDate, desc, username, approvePress, rejectPress, approver_first_name, approver_last_name, text_response, approver_update_date, user_first_name, user_last_name, approver_update_date_unformatted, subDateUnformatted} : TaskItemProps) => {
   
     const maxTaskLength = 25;
     const startDateObject: Date = new Date(startDate);
@@ -47,7 +51,11 @@ const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskSt
     }
 
     return (
-    <View className='bg-white p-5 rounded-md m-4'>
+    <TouchableOpacity 
+      className='bg-white p-5 rounded-md m-4' 
+      onPress={() => {
+        router.push(`joinedOrg/viewTaskDetails/${taskID}?user_first_name=${user_first_name}&user_last_name=${user_last_name}&start_date=${startDate}&end_date=${endDate}&taskName=${taskName}&desc=${desc}&taskStatus=${taskStatus}&approver_first_name=${approver_first_name}&approver_last_name=${approver_last_name}&text_response=${text_response}&approver_update_date=${approver_update_date_unformatted}&submittedDate=${subDateUnformatted}`)
+      }}>
       <View className='flex flex-row justify-between'>
         <View className='flex-1'>
             <Text className='text-lg font-bold'>{taskName.length > maxTaskLength ? taskName.substring(0, maxTaskLength) + '...' : taskName}</Text>
@@ -121,7 +129,7 @@ const TaskItem = ({taskID, taskName, handlePress, deletePress, editPress, taskSt
           </>)}
         </View>
       </>}
-    </View>
+    </TouchableOpacity>
   );
 };
 
