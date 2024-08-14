@@ -1,4 +1,4 @@
-import { View, Text, FlatList } from 'react-native'
+import { View, Text, FlatList, Alert } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router';
 import useAppwrite from '@/appwrite_backend/useAppwrite';
@@ -9,6 +9,7 @@ import BackButton from '@/components/BackButton';
 import CustomButton from '@/components/CustomButton';
 import { BottomSheetModal, useBottomSheetModal } from '@gorhom/bottom-sheet';
 import CreateTaskBottomSheetModal from '@/components/CreateTaskBottomSheetModal';
+import { Snackbar } from 'react-native-paper';
 
 
 const manageTasks = () => {
@@ -60,6 +61,10 @@ const manageTasks = () => {
 
     const [taskName, setTaskName] = useState("")
 
+    const [snackbarVisible, setSnackbarVisible] = useState(false)
+    const onDismissSnackBar = () => setSnackbarVisible(false);
+    const [snackbarText, setSnackbarText] = useState("")
+
     return (
     <SafeAreaView className='h-full'>
         <View className='flex flex-row justify-between mx-5'>
@@ -82,20 +87,34 @@ const manageTasks = () => {
                     taskName={item.taskName}
                     deletePress={() => {
                         delTask(item.id)
+                        setSnackbarText("Successfully deleted Task");
+                        setSnackbarVisible(true);
                     }}
                 >
                 </AddedTaskItem>
             )}
         >
         </FlatList>
+        <Snackbar
+            visible={snackbarVisible}
+            onDismiss={onDismissSnackBar}
+            >
+            {snackbarText}
+        </Snackbar>
         <CreateTaskBottomSheetModal
             ref={createTaskModalRef}
             textInput={taskName}
             handleTextInput={setTaskName}
             decisionPress={() => {
-                addTask(taskName);
-                setTaskName("");
-                dismiss();
+                if (taskName) {
+                    addTask(taskName);
+                    setTaskName("");
+                    dismiss();
+                    setSnackbarText("Successfully added Task");
+                    setSnackbarVisible(true);
+                } else {
+                    Alert.alert("Please enter a name for the Task")
+                }
             }}
         />
     </SafeAreaView>
