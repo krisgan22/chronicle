@@ -25,3 +25,6 @@ expo-env.d.ts
 .env
 
 %ProgramData%
+
+# android folder
+android
