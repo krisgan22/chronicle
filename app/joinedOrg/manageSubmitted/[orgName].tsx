@@ -20,6 +20,7 @@ import FormFieldTextArea from '@/components/FormFieldTextArea';
 import BottomSheet, { BottomSheetModal, useBottomSheet, useBottomSheetModal } from '@gorhom/bottom-sheet';
 import DecisionBottomSheetModal from '@/components/DecisionBottomSheetModal';
 import FilterBottomSheetModal from '@/components/FilterBottomSheetModal';
+import ConfirmModal from '@/components/ConfirmModal';
 
 const SubmittedActivities = () => {
     const { user, userDetails } = useAppwriteContext();
@@ -429,8 +430,31 @@ const SubmittedActivities = () => {
         overwriteFilterList([], "userIDs");
     }
 
+    const [approveConfirmModalVisible, setApproveConfirmModalVisible] = useState(false);
+    const [rejectConfirmModalVisible, setRejectConfirmModalVisible] = useState(false);
+
+    const [itemIDToUpdate, setItemIDToUpdate] = useState<string>("");
+
     return (
         <SafeAreaView className='h-full'>
+            <ConfirmModal
+                handleSubmit={() => {
+                    updateTimesheetDecision(itemIDToUpdate, "approved")
+                    setApproveConfirmModalVisible(!approveConfirmModalVisible);
+                }}
+                modalText='Are you sure you want to approve this Timesheet?'
+                confirmModalVisible={approveConfirmModalVisible}
+                setConfirmModalVisible={setApproveConfirmModalVisible}
+            />
+            <ConfirmModal
+                handleSubmit={() => {
+                    handlePresentModalPress(itemIDToUpdate)
+                    setRejectConfirmModalVisible(!rejectConfirmModalVisible);
+                }}
+                modalText='Are you sure you want to reject this Timesheet?'
+                confirmModalVisible={rejectConfirmModalVisible}
+                setConfirmModalVisible={setRejectConfirmModalVisible}
+            />
             <View className='flex flex-row justify-between mx-5'>
                 <BackButton></BackButton>
                 <View className='flex flex-row'>
@@ -488,15 +512,6 @@ const SubmittedActivities = () => {
                             // console.log(item);
                             // router.push(`joinedOrg/submitted/view/${item.$id}`)
                         }}
-                        deletePress={() => {
-                            deleteActivity(item.$id)
-                            onRefresh();
-                            setSnackbarText("Successfully deleted timesheet");
-                            setSnackbarVisible(true);
-                        }}
-                        editPress={() => {
-                            router.push(`joinedOrg/submitted/edit/${item.$id}?taskName=${item.taskName}&taskDesc=${item.desc}&startDate=${item.start_date}&endDate=${item.end_date}&orgID=${orgID}`)
-                        }}
                         taskStatus={item.taskStatus}
                         subDate={dateReadable(item.submittedDate, TimeOption)}
                         subDateUnformatted={item.submittedDate}
@@ -504,9 +519,17 @@ const SubmittedActivities = () => {
                         endDate={item.end_date}
                         desc={item.desc}
                         username={item.user_first_name + " " + item.user_last_name}
-                        approvePress={() => updateTimesheetDecision(item.$id, "approved")}
+                        approvePress={() => {
+                            // updateTimesheetDecision(item.$id, "approved")
+                            setItemIDToUpdate(item.$id);
+                            setApproveConfirmModalVisible(true);
+                        }}
                         // rejectPress={() => updateTimesheetDecision(item.$id, "rejected")}
-                        rejectPress={() => handlePresentModalPress(item.$id)}
+                        rejectPress={() => {
+                            // handlePresentModalPress(item.$id)
+                            setItemIDToUpdate(item.$id);
+                            setRejectConfirmModalVisible(true);
+                        }}
                         approver_first_name={item.approver_first_name}
                         approver_last_name={item.approver_last_name}
                         approver_update_date={item.approver_update_date ? dateReadable(item.approver_update_date, noTimeOption) : item.approver_update_date}

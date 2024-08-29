@@ -11,6 +11,7 @@ import SwitchSelector from "react-native-switch-selector";
 import BackButton from '@/components/BackButton';
 import { Snackbar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ConfirmModal from '@/components/ConfirmModal';
 
 const SubmittedActivities = () => {
     const { user, setUser, setIsSignedIn} = useAppwriteContext();
@@ -72,8 +73,24 @@ const SubmittedActivities = () => {
         { label: "Rejected", value: "rejected"}
       ];
 
+    const [deleteConfirmModalVisible, setDeleteConfirmModalVisible] = useState(false);
+
+    const [itemIDToUpdate, setItemIDToUpdate] = useState<string>("");
+
     return (
         <SafeAreaView className='h-full'>
+            <ConfirmModal
+                modalText='Are you sure you want to delete this Timesheet?'
+                confirmModalVisible={deleteConfirmModalVisible}
+                setConfirmModalVisible={setDeleteConfirmModalVisible}
+                handleSubmit={() => {
+                    setDeleteConfirmModalVisible(false);
+                    deleteActivity(itemIDToUpdate)
+                    setSnackbarText("Successfully deleted Timesheet");
+                    setSnackbarVisible(true);
+                    onRefresh();
+                }}
+            />
             <View className='mx-5'>
                 <BackButton></BackButton>
             </View>
@@ -81,7 +98,7 @@ const SubmittedActivities = () => {
             <View className='flex items-left mt-1 mb-6 ml-5'>
                 <Text className='text-3xl font-bold text-black'>Submitted Timesheets</Text>
             </View>
-            <View className='mx-10'>
+            <View className='mx-10 pb-5'>
                 <SwitchSelector
                     options={taskStatusOptions}
                     initial={0}
@@ -102,10 +119,12 @@ const SubmittedActivities = () => {
                             // router.push(`joinedOrg/submitted/view/${item.$id}`)
                         }}
                         deletePress={() => {
-                            deleteActivity(item.$id)
-                            onRefresh();
-                            setSnackbarText("Successfully deleted timesheet");
-                            setSnackbarVisible(true);
+                            // deleteActivity(item.$id)
+                            // onRefresh();
+                            // setSnackbarText("Successfully deleted timesheet");
+                            // setSnackbarVisible(true);
+                            setItemIDToUpdate(item.$id);
+                            setDeleteConfirmModalVisible(true);
                         }}
                         editPress={() => {
                             router.push(`joinedOrg/submitted/edit/${item.$id}?taskName=${item.taskName}&taskDesc=${item.desc}&startDate=${item.start_date}&endDate=${item.end_date}&orgID=${orgID}`)
