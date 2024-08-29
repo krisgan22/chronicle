@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,6 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Snackbar } from 'react-native-paper';
 import BackButton from '@/components/BackButton';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const Orgs = () => {
     const { user, setUser, setIsSignedIn} = useAppwriteContext();
@@ -151,7 +152,15 @@ const Orgs = () => {
             <BackButton>
             </BackButton>
             <ScrollView>
-            <Text className='mt-5 font-bold text-3xl'>{orgName}</Text>
+            <View className='mt-5 flex-row justify-between'>
+                <Text className='font-bold text-3xl'>{orgName}</Text>
+                <TouchableOpacity 
+                    onPress={leave}
+                    className='pt-1'
+                    >
+                    <MaterialIcons name="logout" size={24} color="#BE123C" />
+                </TouchableOpacity>
+            </View>
                 {isLoading == true 
                 ? 
                     <Loading></Loading> 
@@ -199,13 +208,13 @@ const Orgs = () => {
                             />
                         </>
                         :<></>}
-                        <CustomButton
+                        {/* <CustomButton
                             title='Leave Organization'
                             handlePress={leave}
                             containerStyles='mt-20 bg-rose-700'
                             isLoading={isSubmitting}
                             textStyles='text-base font-medium text-white'
-                        />
+                        /> */}
                     </>
                 }
             </ScrollView>
