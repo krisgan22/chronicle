@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet, Platform, Alert } from 'react-native'
+import { View, Text, StyleSheet, Platform, Alert, TouchableOpacity, ScrollView } from 'react-native'
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react'
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetTextInput, BottomSheetView } from '@gorhom/bottom-sheet'
 import CustomButton from './CustomButton'
 import { MultiSelect } from 'react-native-element-dropdown';
 import RNDateTimePicker, { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { AntDesign } from '@expo/vector-icons';
 
 type FilterTypes = 'userIDs' | 'tasks';
 
@@ -144,6 +145,14 @@ const FilterBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
       }
     };
 
+    const renderItem = (item: any) => {
+      return (
+        <View style={styles.item}>
+          <Text style={styles.selectedTextStyle}>{item.label}</Text>
+        </View>
+      );
+    };
+
     return (
     <BottomSheetModal 
         ref={ref}
@@ -152,7 +161,9 @@ const FilterBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
         keyboardBlurBehavior='restore'
         backdropComponent={renderBackdrop}
         >
-        <View className='h-full mx-5'>
+        <BottomSheetScrollView
+          style={styles.bottomSheetScrollView}>
+            <Text className='text-lg font-semibold'>Select User(s)</Text>
             <MultiSelect
                 search
                 data={props.userData}
@@ -166,7 +177,22 @@ const FilterBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
                     console.log(item);
                 }}
                 maxSelect={5}
+                style={styles.dropdown}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                renderItem={renderItem}
+                renderSelectedItem={(item, unSelect) => (
+                  <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
+                    <View style={styles.selectedStyle}>
+                      <Text style={styles.textSelectedStyle}>{item.label}</Text>
+                      <AntDesign color="black" name="delete" size={17} />
+                    </View>
+                  </TouchableOpacity>
+                )}
             />
+            <Text className='mt-5 text-lg font-semibold'>Select Task(s)</Text>
             <MultiSelect
                 search
                 data={props.taskData}
@@ -180,11 +206,25 @@ const FilterBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
                     console.log(item);
                 }}
                 maxSelect={5}
+                style={styles.dropdown}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                renderItem={renderItem}
+                renderSelectedItem={(item, unSelect) => (
+                  <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
+                    <View style={styles.selectedStyle}>
+                      <Text style={styles.textSelectedStyle}>{item.label}</Text>
+                      <AntDesign color="black" name="delete" size={17} />
+                    </View>
+                  </TouchableOpacity>
+                )}
             />
 
             {/* iOS and Android Date Picker Code */}
             {/* iOS Specific: */}
-            {Platform.OS === 'ios' && (<View className='mx-5 mt-5'>
+            {Platform.OS === 'ios' && (<View className='mt-5'>
                     <View className='items-start'>
                         <Text className="text-base font-medium">Start Date</Text>
                         <RNDateTimePicker
@@ -206,7 +246,7 @@ const FilterBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
                 </View>)}
 
                 {/* Android Specific: */}
-                {Platform.OS === 'android' && (<View className='mx-5 mt-5'>
+                {Platform.OS === 'android' && (<View className='mt-5'>
                     <View className=''>
                         <Text className='text-base font-medium mb-1'>Start Date</Text>
                         <CustomButton
@@ -233,7 +273,7 @@ const FilterBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
 
             {/* */}
             
-            <View className='flex-1 justify-end p-4'>
+            <View className='mt-10 flex-1 justify-end p-4'>
                 <CustomButton
                     title='Clear Filters'
                     handlePress={() => {
@@ -242,7 +282,7 @@ const FilterBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
                       setStartD(new Date(props.earliestDate))
                       setEndD(new Date(props.latestDate))
                     }}
-                    containerStyles='mb-5 bg-rose-600'
+                    containerStyles='mb-5 bg-rose-600 -mx-4'
                     textStyles='text-base font-medium text-white'
                 />
                 <CustomButton
@@ -262,32 +302,84 @@ const FilterBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
                           props.dismiss();
                         }
                     }}
-                    containerStyles='mb-5 bg-sky-600'
+                    containerStyles='bg-green-600 -mx-4'
                     textStyles='text-base font-medium text-white'
                 />
             </View>
-        </View>
+        </BottomSheetScrollView >
     </BottomSheetModal>
     )
 });
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 24,
-      backgroundColor: "grey",
+  container: { padding: 16 },
+  dropdown: {
+    height: 50,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
     },
-    textInput: {
-      alignSelf: "stretch",
-      padding: 12,
-      borderRadius: 12,
-      backgroundColor: "#d9d9d9"
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+
+    elevation: 2,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  item: {
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  selectedStyle: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    marginTop: 8,
+    marginRight: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    shadowOffset: {
+      width: 0,
+      height: 1,
     },
-    contentContainer: {
-      flex: 1,
-      alignItems: "center",
-    },
-  });
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+
+    elevation: 2,
+  },
+  textSelectedStyle: {
+    marginRight: 5,
+    fontSize: 16,
+  },
+  bottomSheetScrollView: {
+    height: '100%',
+    marginHorizontal: 20,
+  },
+});
   
 
 export default FilterBottomSheetModal
