@@ -228,12 +228,12 @@ const Orgs = () => {
                     </>
                 }
             </ScrollView>
+            </View>
             <Snackbar
                 visible={snackbarVisible}
                 onDismiss={onDismissSnackBar}>
                 {snackbarText}
             </Snackbar>
-            </View>
         </SafeAreaView>
     )
 }

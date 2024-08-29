@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Snackbar } from 'react-native-paper';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import BackButton from '@/components/BackButton';
+import ConfirmModal from '@/components/ConfirmModal';
 
 type TimeSheetFormFields = {
     desc: string,
@@ -49,6 +50,8 @@ const tsOrg = () => {
     
     const { user, userDetails } = useAppwriteContext();
     const { orgName, orgID } = useLocalSearchParams();
+
+    const [confirmModalVisible, setConfirmModalVisible] = useState(false);
 
     console.log("user: ", user.userId);
     console.log("orgName: ", orgName);
@@ -92,6 +95,7 @@ const tsOrg = () => {
     }
 
     const submit = async () => {
+        setConfirmModalVisible(false);
         const start_date = combineDate(startD, startT);
         const end_date = combineDate(endD, endT);
         const cur_date: Date = new Date();
@@ -193,8 +197,15 @@ const tsOrg = () => {
         }
       };
 
+
   return (
     <SafeAreaView>
+        <ConfirmModal
+            modalText='Are you sure you want to submit this Timesheet?'
+            confirmModalVisible={confirmModalVisible}
+            setConfirmModalVisible={setConfirmModalVisible}
+            handleSubmit={submit}
+        />
         <View className='ml-5'>
             <BackButton/>
         </View>
@@ -355,7 +366,7 @@ const tsOrg = () => {
                 <View className='mx-5 mt-10'>
                     <CustomButton
                             title='Submit Timesheet'
-                            handlePress={submit}
+                            handlePress={() => setConfirmModalVisible(true)}
                             containerStyles='bg-black'
                             isLoading={isSubmitting}
                             textStyles='text-base font-medium text-white'
