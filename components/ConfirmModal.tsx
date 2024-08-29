@@ -20,18 +20,18 @@ const ConfirmModal = ({confirmModalVisible, setConfirmModalVisible, handleSubmit
         }}>
         <View style={styles.modalBackground}>
             <View style={styles.modalView}>
-                <Text className='text-base'>{modalText}</Text>
+                <Text className='text-base text-center'>{modalText}</Text>
                 <View className='flex-row'>
                     <CustomButton
                         handlePress={() => setConfirmModalVisible(!confirmModalVisible)}
                         title='Cancel'
-                        textStyles='text-base text-red-600 mx-5'
+                        textStyles='text-base text-red-600 mx-10'
                         >
                     </CustomButton>
                     <CustomButton
                         handlePress={handleSubmit}
                         title='Confirm'
-                        textStyles='text-base text-green-600 mx-5'
+                        textStyles='text-base text-green-600 mx-10'
                         >
                     </CustomButton>
                 </View>

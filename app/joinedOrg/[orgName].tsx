@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Snackbar } from 'react-native-paper';
 import BackButton from '@/components/BackButton';
 import { MaterialIcons } from '@expo/vector-icons';
+import ConfirmModal from '@/components/ConfirmModal';
 
 const Orgs = () => {
     const { user, setUser, setIsSignedIn} = useAppwriteContext();
@@ -146,8 +147,17 @@ const Orgs = () => {
         }
     }
 
+    const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+
     return (
         <SafeAreaView className='h-full'>
+            <ConfirmModal
+                modalText='Are you sure you want to leave the organization?'
+                handleSubmit={leave}
+                confirmModalVisible={confirmModalVisible}
+                setConfirmModalVisible={setConfirmModalVisible}
+            >
+            </ConfirmModal>
             <View className='mx-5'>
             <BackButton>
             </BackButton>
@@ -155,7 +165,7 @@ const Orgs = () => {
             <View className='mt-5 flex-row justify-between'>
                 <Text className='font-bold text-3xl'>{orgName}</Text>
                 <TouchableOpacity 
-                    onPress={leave}
+                    onPress={() => setConfirmModalVisible(true)}
                     className='pt-1'
                     >
                     <MaterialIcons name="logout" size={24} color="#BE123C" />
