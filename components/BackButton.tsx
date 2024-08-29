@@ -17,7 +17,7 @@ export default function BackButton({containerStyles, textStyles, isLoading}: Cus
       }}
       activeOpacity={0.7}
       > 
-      <Text className={`text-white ${textStyles}`}>←</Text>
+      <Text className={`text-white font-interLight ${textStyles}`}>←</Text>
     </TouchableOpacity>
   );
 }

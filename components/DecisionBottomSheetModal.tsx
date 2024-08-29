@@ -27,7 +27,7 @@ const DecisionBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
     []
   );
 
-  const snapPoints = useMemo(() => ["30%"], []);
+  const snapPoints = useMemo(() => ["40%"], []);
   return (
     <BottomSheetModal 
         ref={ref}

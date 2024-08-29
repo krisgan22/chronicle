@@ -26,7 +26,7 @@ const CreateTaskBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
     []
   );
 
-  const snapPoints = useMemo(() => ["30%"], []);
+  const snapPoints = useMemo(() => ["40%"], []);
   return (
     <BottomSheetModal 
         ref={ref}
@@ -34,23 +34,27 @@ const CreateTaskBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
         backdropComponent={renderBackdrop}
         >
         <View className='mx-5'>
-            <Text className='my-2 font-medium'>Task Name</Text>
-            <BottomSheetTextInput 
-                placeholder="What's the name of this task?"
-                placeholderTextColor='grey'
-                style={styles.textInput} 
-                value={props.textInput}
-                onChangeText={props.handleTextInput}
-                autoCorrect={true}
-                autoCapitalize='words'
-                />
-            <CustomButton
-                title='Create'
-                handlePress={props.decisionPress}
-                containerStyles='mt-5 bg-green-500'
-                isLoading={props.isSubmitting}
-                textStyles='text-base font-medium text-white'
-            />
+            <View>
+              <Text className='my-2 font-medium'>Task Name</Text>
+              <BottomSheetTextInput 
+                  placeholder="What's the name of this task?"
+                  placeholderTextColor='grey'
+                  style={styles.textInput} 
+                  value={props.textInput}
+                  onChangeText={props.handleTextInput}
+                  autoCorrect={true}
+                  autoCapitalize='words'
+                  />
+            </View>
+            <View>
+              <CustomButton
+                  title='Create'
+                  handlePress={props.decisionPress}
+                  containerStyles='mt-5 bg-green-500'
+                  isLoading={props.isSubmitting}
+                  textStyles='text-base font-medium text-white'
+              />
+            </View>
         </View>
     </BottomSheetModal>
   )
