@@ -14,6 +14,7 @@ import CustomButton from '@/components/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Snackbar } from 'react-native-paper';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import BackButton from '@/components/BackButton';
 
 type TimeSheetFormFields = {
     desc: string,
@@ -199,7 +200,10 @@ const EditTimesheet = () => {
 
   return (
     <SafeAreaView>
-        <Text className="text-2xl font-bold mt-6 ml-5">
+        <View className='ml-5'>
+            <BackButton/>
+        </View>
+        <Text className="text-3xl font-bold mt-1 ml-5">
             Enter Information
         </Text>
         <ScrollView className='h-full'>

@@ -9,6 +9,7 @@ import SwitchSelector from "react-native-switch-selector";
 import PersonItem from '@/components/PersonItem'
 import { Snackbar } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native'
+import BackButton from '@/components/BackButton'
 
 const manageMembers = () => {
   const { user, userDetails } = useAppwriteContext();
@@ -65,7 +66,8 @@ const manageMembers = () => {
   // const filteredData = members[0].documents.filter((item: any) => members[1][item.userID]["status"] === selectedUserStatus);
 
   return (
-    <SafeAreaView className='h-full'>
+    <SafeAreaView className='h-full ml-5'>
+      <BackButton/>
       <View className='flex items-left mt-5 mb-6 ml-5'>
         <Text className='text-3xl font-bold text-black'>Members of {orgName}</Text>
       </View>
