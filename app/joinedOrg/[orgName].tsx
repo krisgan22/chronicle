@@ -175,7 +175,7 @@ const Orgs = () => {
                             textStyles='text-base font-medium text-white'
                         />
                         <CustomButton
-                            title='View Members'
+                            title='Manage Members'
                             handlePress={viewUsers}
                             containerStyles='mt-7 bg-green-700'
                             isLoading={isSubmitting}
@@ -184,7 +184,7 @@ const Orgs = () => {
                         {privilege !== null && privilege !== undefined && (privilege === "board_member" || privilege === "mentor") ?
                         <>
                             <CustomButton
-                                title='View Member Timesheets'
+                                title='Manage Member Timesheets'
                                 handlePress={viewMemberTimesheets}
                                 containerStyles='mt-7 bg-cyan-700'
                                 isLoading={isSubmitting}
