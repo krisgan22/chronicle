@@ -25,13 +25,15 @@ const ConfirmModal = ({confirmModalVisible, setConfirmModalVisible, handleSubmit
                     <CustomButton
                         handlePress={() => setConfirmModalVisible(!confirmModalVisible)}
                         title='Cancel'
-                        textStyles='text-base text-red-600 mx-10'
+                        textStyles='text-white px-5'
+                        containerStyles='mt-5 bg-rose-700 mx-5 h-[50px]'
                         >
                     </CustomButton>
                     <CustomButton
                         handlePress={handleSubmit}
                         title='Confirm'
-                        textStyles='text-base text-green-600 mx-10'
+                        textStyles='text-white px-5'
+                        containerStyles='mt-5 bg-green-600 mx-5 h-[50px]'
                         >
                     </CustomButton>
                 </View>
