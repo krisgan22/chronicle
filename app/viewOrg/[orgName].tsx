@@ -45,11 +45,18 @@ const Orgs = () => {
         try {
             setIsSubmitting(true);
             const joinRequestResult = await requestJoinOrg(userDetails.username, user["userId"], orgName, orgID);
-            if (!joinRequestResult)
+            if (joinRequestResult && joinRequestResult.total !== 0)
             {
-                setSnackbarText("You have already requested to join this organization!")
+                if (joinRequestResult.documents[0].status === "accepted")
+                {
+                    setSnackbarText("You are already a part of this organization!")
+                }
+                else
+                {
+                    setSnackbarText("You have already requested to join this organization!")
+                }
                 setSnackbarVisible(true);
-            } else if (joinRequestResult) {
+            } else {
                 setSnackbarText("Your request was sent!")
                 setSnackbarVisible(true);
                 await AsyncStorage.setItem(`join_${user["userId"]}.${orgID}`, "true");

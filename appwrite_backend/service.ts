@@ -229,11 +229,11 @@ export async function requestJoinOrg(username: any, userID: any, orgName : any, 
                     username: username
                 });
             console.log("service.ts: requestJoinOrg(): ", joinRequestResult);
-            return joinRequestResult;
+            return checkExistsResult;
         } else
         {
             console.log(`service.ts: requestJoinOrg(): Request for ${userID} to join ${orgID} already exists.`);
-            return null;
+            return checkExistsResult;
         }
     } catch (error) {
         console.error("service.ts: requestJoinOrg(): ", error);
