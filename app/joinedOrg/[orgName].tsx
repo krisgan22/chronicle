@@ -193,15 +193,25 @@ const Orgs = () => {
                             isLoading={isSubmitting}
                             textStyles='text-base font-medium text-white'
                         />
-                        <CustomButton
-                            title='Manage Members'
-                            handlePress={viewUsers}
-                            containerStyles='mt-7 bg-green-700'
-                            isLoading={isSubmitting}
-                            textStyles='text-base font-medium text-white'
-                        />
+                        {privilege !== null && privilege !== undefined && (privilege === "volunteer") ?
+                        <>
+                            <CustomButton
+                                title='View Members'
+                                handlePress={viewUsers}
+                                containerStyles='mt-7 bg-green-700'
+                                isLoading={isSubmitting}
+                                textStyles='text-base font-medium text-white'
+                            />
+                        </>:<></>}
                         {privilege !== null && privilege !== undefined && (privilege === "board_member" || privilege === "mentor") ?
                         <>
+                            <CustomButton
+                                title='Manage Members'
+                                handlePress={viewUsers}
+                                containerStyles='mt-7 bg-green-700'
+                                isLoading={isSubmitting}
+                                textStyles='text-base font-medium text-white'
+                            />
                             <CustomButton
                                 title='Manage Member Timesheets'
                                 handlePress={viewMemberTimesheets}
